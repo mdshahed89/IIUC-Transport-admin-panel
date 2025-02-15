@@ -145,7 +145,7 @@ export default function DashboardLayout({ children, params }) {
               sideBarOpen
                 ? "inboxSideBarOpen w-[20rem] "
                 : "inboxSideBarClose w-[3.5rem] "
-            } bg-[#2C2C2C] z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2 border-r px-1 md:px-3 py-5 overflow-y-auto `}
+            } bg-[#2C2C2C] z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-5 overflow-y-auto `}
           >
             <div>
               <div className=" h-[5rem] ">
@@ -222,7 +222,7 @@ export default function DashboardLayout({ children, params }) {
                 <FaRegUser className=" text-[1.2rem] " />
               </div>
             </div>
-            <div className=" h-[calc(100vh-4.5rem)] overflow-y-auto p-2 mr-1 ">
+            <div className=" h-[calc(100vh-4.5rem)] overflow-y-auto p-2 ">
               {children}
             </div>
           </div>
