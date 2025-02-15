@@ -131,9 +131,9 @@ export default function DashboardLayout({ children, params }) {
     },
   ];
 
-  if (isLoading) {
-    return <LoadingPage />;
-  }
+  // if (isLoading) {
+  //   return <LoadingPage />;
+  // }
 
   return (
     <div className=" font-Georama max-h-[100vh] overflow-x-hidden ">
