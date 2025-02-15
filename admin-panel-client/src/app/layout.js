@@ -1,5 +1,6 @@
 import { DataProvider } from "./context/Context";
 import "./globals.css";
+import { ToastContainer } from 'react-toastify';
 
 
 export const metadata = {
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
         className={` antialiased`}
       >
         {children}
+        <ToastContainer />
       </body>
     </html>
     </DataProvider>
