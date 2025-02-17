@@ -99,7 +99,7 @@ export const getBusSchedules = async () => {
 };
 
 export const getBusScheduleById = async (id) => {
-  return getData({ endpoint: `/bus-schedules${id}` });
+  return getData({ endpoint: `/bus-schedules/${id}` });
 };
 
 export const getBusInfo = async () => {

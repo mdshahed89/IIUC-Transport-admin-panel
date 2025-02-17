@@ -3,6 +3,8 @@ import Button from "@/components/Button";
 import { InputField, SelectField } from "@/components/FormField";
 import { Table, Td } from "@/components/Table";
 import { deleteDataAndRevalidatePath } from "@/lib/fetchData";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 
 import Link from "next/link";
 import React, { useState } from "react";
@@ -16,23 +18,25 @@ const tableHeaders = [
   "Actions",
 ];
 
+const userOption = ["All Types", "Students", "Teachers", "Staff"];
+
 const Content = ({ busData = [] }) => {
   const [busNumber, setBusNumber] = useState();
-  const [busType, setBusType] = useState("All");
+  const [busType, setBusType] = useState("All Types");
 
   // Handler
   const handleBusNumebr = (e) => {
     setBusNumber(e.target.value);
   };
-  const handleBusType = (e) => {
-    setBusType(e.target.value);
+  const handleBusType = (value) => {
+    setBusType(value);
   };
 
   // Filter
   const filterByBusNumber = (bus) =>
     busNumber ? bus?.busNo.toString().includes(busNumber.toString()) : true;
   const filterByBusType = (bus) =>
-    busType === "All" ? true : bus?.busType === busType;
+    busType === "All Types" ? true : bus?.busType === busType;
 
   // Handle delete assign bus
   const deleteAssignbus = (id) => {
@@ -51,18 +55,9 @@ const Content = ({ busData = [] }) => {
           value={busNumber}
           onChange={handleBusNumebr}
         />
-        <SelectField
-          options={[
-            { value: "All", label: "All Types" },
-            { value: "Students", label: "Students" },
-            { value: "Teachers", label: "Teachers" },
-            { value: "Staff", label: "Staff" },
-          ]}
-          value={busType}
-          onChange={handleBusType}
-        />
+        <SelectField selectOption={userOption} getValue={handleBusType} />
         <Link
-          href="/dashboard/assign-bus"
+          href="/dashboard/assigned-bus?add=true"
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
         >
           Assign New Bus
@@ -92,13 +87,19 @@ const Content = ({ busData = [] }) => {
                 <Td>{Gender || "N/A"}</Td>
 
                 <Td>
-                  {/* Actions (Edit/Delete buttons, etc.) */}
-                  <Link href={`/dashboard/edit-assign-bus/${id}`}>
-                    <Button>Edit</Button>
-                  </Link>
-                  <Button bg="red" onClick={() => deleteAssignbus(id)}>
-                    Delete
-                  </Button>
+                  <div className="flex gap-2">
+                    <Link href={`/dashboard/assigned-bus?edit=${id}`}>
+                      <Button classes="bg-transparent border px-2">
+                        <CiEdit size={24} className="text-blue-400" />
+                      </Button>
+                    </Link>
+                    <Button
+                      classes="bg-transparent border px-2"
+                      onClick={() => deleteAssignbus(id)}
+                    >
+                      <MdDeleteOutline size={24} className="text-red-500" />
+                    </Button>
+                  </div>
                 </Td>
               </tr>
             );

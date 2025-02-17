@@ -16,11 +16,11 @@ const page = async () => {
       </div>
 
       <div className="space-x-4">
-        <Link href="/dashboard/schedule">
+        <Link href="/dashboard/schedule?add=true">
           <Button bg="green">Add New Schedule</Button>
         </Link>
         <Link href="/dashboard/schedule">
-          <Button>View Schedule</Button>
+          <Button classes="bg-sky-500">View Schedule</Button>
         </Link>
       </div>
 
@@ -39,9 +39,9 @@ export default page;
 
 const Card = ({ title, content }) => {
   return (
-    <div class="bg-white p-6 rounded-lg shadow-md w-1/4">
-      <h2 class="text-xl font-semibold">{title}</h2>
-      <p class="text-3xl font-bold mt-2">{content}</p>
+    <div className="bg-white p-6 rounded-lg shadow-md w-1/4">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <p className="text-3xl font-bold mt-2">{content}</p>
     </div>
   );
 };

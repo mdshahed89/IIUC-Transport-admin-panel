@@ -1,6 +1,6 @@
 "use client";
 
-const Button = ({ bg = "blue", children, calsses = "", ...props }) => {
+const Button = ({ bg = "blue", children, classes = "", ...props }) => {
   let bgColor;
   if (bg === "blue") {
     bgColor = "bg-blue-500";
@@ -13,7 +13,7 @@ const Button = ({ bg = "blue", children, calsses = "", ...props }) => {
   }
   return (
     <button
-      className={`px-4 py-2  rounded  text-white ${bgColor} ${calsses}`}
+      className={`px-4 py-2  rounded font-medium text-white ${bgColor} ${classes}`}
       {...props}
     >
       {children}

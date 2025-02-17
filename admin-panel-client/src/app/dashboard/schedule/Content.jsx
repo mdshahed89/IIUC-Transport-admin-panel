@@ -2,6 +2,10 @@
 import Button from "@/components/Button";
 import { InputField, SelectField } from "@/components/FormField";
 import { Table, Td } from "@/components/Table";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
+import { MdCheckCircle } from "react-icons/md";
+import { MdCheckCircleOutline } from "react-icons/md";
 import {
   deleteDataAndRevalidatePath,
   scaheduleStatusToggle,
@@ -24,13 +28,13 @@ const tableHeaders = [
 
 // Schedule Options
 const scheduleOptions = [
-  { value: "All", label: "All Types" },
-  { value: "Regular Schedule", label: "Regular Schedule" },
-  { value: "Friday Schedule", label: "Friday Schedule" },
-  { value: "Exam Schedule", label: "Exam Schedule" },
-  { value: "Library Schedule", label: "Library Schedule" },
-  { value: "Residential Schedule", label: "Residential Schedule" },
-  { value: "Special Schedule", label: "Special Schedule" },
+  "All",
+  "Regular Schedule",
+  "Friday Schedule",
+  "Exam Schedule",
+  "Library Schedule",
+  "Residential Schedule",
+  "Special Schedule",
 ];
 
 const Content = ({ schedules }) => {
@@ -45,8 +49,8 @@ const Content = ({ schedules }) => {
     setStatus("");
   };
 
-  const handleSchedule = (e) => {
-    setscheduleType(e.target.value);
+  const handleSchedule = (value) => {
+    setscheduleType(value);
   };
 
   const handleStatus = () => {
@@ -102,12 +106,14 @@ const Content = ({ schedules }) => {
           placeholder="Search by slot name, road, point, time and type"
         />
 
+        <SelectField selectOption={scheduleOptions} getValue={handleSchedule} />
+
         {/* Filter Schedule type */}
-        <SelectField
+        {/* <SelectField
           options={scheduleOptions}
           value={scheduleType}
           onChange={handleSchedule}
-        />
+        /> */}
 
         {/* Status filter */}
         <Button bg="red" onClick={handleStatus}>
@@ -117,7 +123,7 @@ const Content = ({ schedules }) => {
         {/* Clear filter */}
         <Button onClick={clearFilter}>Clear Filter</Button>
 
-        <Link href="/dashboard/add-schedule">
+        <Link href="/dashboard/schedule?add=true">
           <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
             Add New Schedule
           </button>
@@ -151,25 +157,36 @@ const Content = ({ schedules }) => {
                 <Td>{scheduleType}</Td>
                 <Td>
                   {isActive ? (
-                    <Button onClick={() => scaheduleStatusToggle(id, isActive)}>
-                      Active
+                    <Button
+                      classes="bg-transparent border"
+                      onClick={() => scaheduleStatusToggle(id, isActive)}
+                    >
+                      <MdCheckCircle className="text-green-500" />
                     </Button>
                   ) : (
                     <Button
-                      bg="red"
+                      classes="bg-transparent border "
                       onClick={() => scaheduleStatusToggle(id, isActive)}
                     >
-                      Inactive
+                      <MdCheckCircleOutline className="text-gray-600" />
                     </Button>
                   )}
                 </Td>
                 <Td>
-                  <Link href={`/dashboard/edit-schedule/${id}`}>
-                    <Button>Edit</Button>
-                  </Link>
-                  <Button bg="red" onClick={() => deleteBusSchedules(id)}>
-                    Delete
-                  </Button>
+                  <div className="flex gap-2">
+                    <Link href={`/dashboard/schedule?edit=${id}`}>
+                      <Button classes="bg-transparent border px-2">
+                        <CiEdit size={24} className="text-blue-400" />
+                      </Button>
+                    </Link>
+
+                    <Button
+                      classes="bg-transparent border px-2"
+                      onClick={() => deleteBusSchedules(id)}
+                    >
+                      <MdDeleteOutline size={24} className="text-red-500" />
+                    </Button>
+                  </div>
                 </Td>
               </tr>
             );

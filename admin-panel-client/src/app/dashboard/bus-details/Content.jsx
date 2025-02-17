@@ -3,6 +3,8 @@ import Button from "@/components/Button";
 import { InputField } from "@/components/FormField";
 import { Table, Td } from "@/components/Table";
 import { deleteDataAndRevalidatePath } from "@/lib/fetchData";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -73,12 +75,19 @@ const Content = ({ buses }) => {
               <Td>{helperName}</Td>
               <Td>{helperPhone}</Td>
               <Td>
-                <Link href={`/dashboard/edit-bus/${id}`}>
-                  <Button>Edit</Button>
-                </Link>
-                <Button bg="red" onClick={() => deleteBusDetails(id)}>
-                  Delete
-                </Button>
+                <div className="flex gap-2">
+                  <Link href={`/dashboard/bus-details?edit=${id}`}>
+                    <Button classes="bg-transparent border px-2">
+                      <CiEdit size={24} className="text-blue-400" />
+                    </Button>
+                  </Link>
+                  <Button
+                    classes="bg-transparent border px-2"
+                    onClick={() => deleteBusDetails(id)}
+                  >
+                    <MdDeleteOutline size={24} className="text-red-500" />
+                  </Button>
+                </div>
               </Td>
             </tr>
           );

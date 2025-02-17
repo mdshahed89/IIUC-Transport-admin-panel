@@ -60,7 +60,9 @@ const Page = () => {
         </div>
 
         <div>
-          <label className="block text-gray-600 font-medium mb-1">Message</label>
+          <label className="block text-gray-600 font-medium mb-1">
+            Message
+          </label>
           <textarea
             name="message"
             value={notification.message}
@@ -82,7 +84,15 @@ const Page = () => {
             </div>
             {infoOpen && (
               <ul className="absolute w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10">
-                {["Info", "Warning", "Alert"].map((option) => (
+                {[
+                  "Info",
+                  "Warning",
+                  "Alert",
+                  "Alert",
+                  "Alert",
+                  "Alert",
+                  "Alert",
+                ].map((option) => (
                   <li
                     key={option}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
@@ -99,7 +109,9 @@ const Page = () => {
           </div>
 
           <div className="w-1/2 relative" ref={allRef}>
-            <label className="block text-gray-600 font-medium mb-1">Target</label>
+            <label className="block text-gray-600 font-medium mb-1">
+              Target
+            </label>
             <div
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer"
               onClick={() => setAllOpen(!allOpen)}
