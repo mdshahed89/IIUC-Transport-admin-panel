@@ -2,14 +2,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { IoIosNotificationsOutline } from "react-icons/io";
+import { ButtonLoading } from "@/components/PageLoading";
+import { toast } from "react-toastify";
 
 const Page = () => {
   const [notification, setNotification] = useState({
     title: "",
     message: "",
-    info: "Info",
-    all: "All",
+    type: "Info",
+    recipientType: "All",
   });
+  const [loading, setLoading] = useState(false)
 
   const [infoOpen, setInfoOpen] = useState(false);
   const [allOpen, setAllOpen] = useState(false);
@@ -35,18 +38,58 @@ const Page = () => {
     };
   }, []);
 
+  const handleSubmitTrip = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/notification `,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(notification),
+          }
+        );
+  
+        const data = await response.json();
+  
+        console.log(data);
+        if (response.ok) {
+          toast.success("Notification created successfully!");
+          setNotification({
+            title: "",
+            message: "",
+            type: "Info",
+            recipientType: "All",
+          });
+        } else {
+          toast.error(data.message || "Failed to submit trip!");
+        }
+      } catch (error) {
+        toast.error("Something went wrong! Please try again.");
+        console.error("Error submitting notification:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    console.log(notification);
+    
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="max-w-xl mx-auto md:mt-8 p-8 bg-white md:shadow-[0px_1px_10px_rgba(0,0,0,0.15)] rounded-2xl"
+      className="max-w-xl mx-auto md:mt-8 px-3 md:px-8 py-8 bg-white md:shadow-[0px_1px_10px_rgba(0,0,0,0.15)] rounded-2xl"
     >
       <div className="flex items-center space-x-2 mb-10">
         <h2 className="text-3xl font-semibold text-gray-800">Notification</h2>
       </div>
 
-      <div className="space-y-6">
+      <form onSubmit={handleSubmitTrip} className="space-y-6">
         <div>
           <label className="block text-gray-600 font-medium mb-1">Title</label>
           <input
@@ -55,6 +98,7 @@ const Page = () => {
             value={notification.title}
             onChange={(e) => handleChange("title", e.target.value)}
             placeholder="Enter notification title"
+            required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
           />
         </div>
@@ -68,6 +112,7 @@ const Page = () => {
             value={notification.message}
             onChange={(e) => handleChange("message", e.target.value)}
             placeholder="Enter your message"
+            required
             className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
             rows="4"
           />
@@ -80,7 +125,7 @@ const Page = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer"
               onClick={() => setInfoOpen(!infoOpen)}
             >
-              {notification.info}
+              {notification.type}
             </div>
             {infoOpen && (
               <ul className="absolute w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10">
@@ -88,16 +133,12 @@ const Page = () => {
                   "Info",
                   "Warning",
                   "Alert",
-                  "Alert",
-                  "Alert",
-                  "Alert",
-                  "Alert",
                 ].map((option) => (
                   <li
                     key={option}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
-                      handleChange("info", option);
+                      handleChange("type", option);
                       setInfoOpen(false);
                     }}
                   >
@@ -116,7 +157,7 @@ const Page = () => {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer"
               onClick={() => setAllOpen(!allOpen)}
             >
-              {notification.all}
+              {notification.recipientType}
             </div>
             {allOpen && (
               <ul className="absolute w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10">
@@ -125,7 +166,7 @@ const Page = () => {
                     key={option}
                     className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
-                      handleChange("all", option);
+                      handleChange("recipientType", option);
                       setAllOpen(false);
                     }}
                   >
@@ -137,14 +178,18 @@ const Page = () => {
           </div>
         </div>
 
+        <div className=" pt-5 ">
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.95 }}
-          className="w-full flex items-center active:scale-90 justify-center space-x-2 bg-green-500 text-white px-4 py-3 rounded-lg text-lg font-semibold shadow-md transition-all duration-300"
+          className="w-full flex relative h-[3rem] items-center active:scale-90 justify-center space-x-2 bg-green-500 text-white  rounded-lg text-lg font-semibold shadow-md transition-all duration-300"
         >
-          <span>Send Notification</span>
+          {
+            loading ? <ButtonLoading /> : "Send Notification"
+          }
         </motion.button>
-      </div>
+        </div>
+      </form>
     </motion.div>
   );
 };

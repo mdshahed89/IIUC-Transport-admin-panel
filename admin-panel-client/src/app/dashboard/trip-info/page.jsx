@@ -1,28 +1,132 @@
 "use client";
+import { ButtonLoading } from "@/components/PageLoading";
+import { TripTable } from "@/components/Table";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const BusTripManagement = () => {
   const [tripDetails, setTripDetails] = useState({
-    busNumber: "",
+    busNo: "",
     startPoint: "",
-    numberOfStudents: "",
-    substituteDriverName: "",
-    substituteHelperName: "",
+    noOfStudents: "",
+    subsDriverName: "",
+    subsHelperName: "",
   });
+  const [tripLoading, setTripLoading] = useState(false);
 
   const [tripReportDate, setTripReportDate] = useState("");
+  const [isLoading2, setIsLoading2] = useState(false);
+  const [isLoading3, setIsLoading3] = useState(false);
+  const [trips, setTrips] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setTripDetails({ ...tripDetails, [name]: value });
   };
 
-  const handleFetchReport = () => {
-    console.log("Fetching report for:", tripReportDate);
+  const fetchTrips = async () => {
+
+    setIsLoading3(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/trip-info/fetch-trip-info`,
+        {
+          method: "GET",
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setTrips(data?.data || []);
+      } else {
+        console.log(data.message || "Failed to fetch trips!");
+      }
+    } catch (error) {
+      toast.error("Something went wrong! Please try again.");
+      console.error("Failed to fetch trips:", error);
+    } finally {
+      setIsLoading3(false);
+    }
   };
 
-  console.log(tripDetails);
+  useEffect(()=> {
+    fetchTrips()
+  }, [])
+
+  const handleSubmitTrip = async (e) => {
+    e.preventDefault();
+    setTripLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/trip-info/manual-trip`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(tripDetails),
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+      if (response.ok) {
+        toast.success("Trip submitted successfully!");
+        setTripDetails({
+          busNo: "",
+          startPoint: "",
+          noOfStudents: "",
+          subsDriverName: "",
+          subsHelperName: "",
+        });
+      } else {
+        toast.error(data.message || "Failed to submit trip!");
+      }
+    } catch (error) {
+      toast.error("Something went wrong! Please try again.");
+      console.error("Error submitting trip:", error);
+    } finally {
+      setTripLoading(false);
+    }
+  };
+
+  const fetchTripWithDate = async (e) => {
+    e.preventDefault();
+    if (!tripReportDate) {
+      toast.error("Select a date to get data");
+      return;
+    }
+    setIsLoading2(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/trip-info/fetch-trip-info?tripDate=${tripReportDate}`,
+        {
+          method: "GET",
+        }
+      );
+
+      const data = await response.json();
+
+      console.log(data);
+      if (response.ok) {
+        toast.success("Trip Fetched successfully!");
+        setTrips(data?.data || []);
+        setTripReportDate("");
+      } else {
+        toast.error(data.message || "Failed to fetch trips!");
+      }
+    } catch (error) {
+      toast.error("Something went wrong! Please try again.");
+      console.error("Failed to fetch trips:", error);
+    } finally {
+      setIsLoading2(false);
+    }
+  };
+
+  console.log(tripReportDate);
 
   return (
     <motion.div
@@ -34,15 +138,16 @@ const BusTripManagement = () => {
       <h1 className="text-3xl font-semibold mb-8">Bus Trip Management</h1>
 
       <div className="space-y-10">
-        <div>
+        <form onSubmit={handleSubmitTrip}>
           <h2 className="text-2xl font-semibold mb-4">Log Manual Trip</h2>
           <div className="space-y-4">
             <input
               type="text"
-              name="busNumber"
-              value={tripDetails.busNumber}
+              name="busNo"
+              value={tripDetails.busNo}
               onChange={handleChange}
               placeholder="Bus Number"
+              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
             />
             <input
@@ -51,39 +156,43 @@ const BusTripManagement = () => {
               value={tripDetails.startPoint}
               onChange={handleChange}
               placeholder="Start Point"
+              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
             />
             <input
               type="number"
-              name="numberOfStudents"
-              value={tripDetails.numberOfStudents}
+              name="noOfStudents"
+              value={tripDetails.noOfStudents}
               onChange={handleChange}
               placeholder="Number of Students"
+              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
             />
             <input
               type="text"
-              name="substituteDriverName"
-              value={tripDetails.substituteDriverName}
+              name="subsDriverName"
+              value={tripDetails.subsDriverName}
               onChange={handleChange}
               placeholder="Substitute Driver Name"
+              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
             />
             <input
               type="text"
-              name="substituteHelperName"
-              value={tripDetails.substituteHelperName}
+              name="subsHelperName"
+              value={tripDetails.subsHelperName}
               onChange={handleChange}
               placeholder="Substitute Helper Name"
+              required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
             />
             <div className=" flex justify-end ">
-              <button className=" px-7 bg-green-500 text-white p-2 rounded-lg transition-all ease-out active:scale-105 duration-300">
-                Confirm Trip
+              <button className=" relative h-[2.5rem] w-[9rem]  bg-green-500 text-white rounded-lg transition-all ease-out active:scale-105 duration-300">
+                {tripLoading ? <ButtonLoading /> : "Confirm Trip"}
               </button>
             </div>
           </div>
-        </div>
+        </form>
 
         <div>
           <h2 className="text-2xl font-semibold mb-4">Trip Report</h2>
@@ -95,51 +204,24 @@ const BusTripManagement = () => {
               className="w-full p-2 border outline-none border-gray-300 rounded-lg"
             />
             <div className=" flex justify-end ">
-              <button
-                onClick={handleFetchReport}
-                className=" px-7 bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 ttransition-all ease-out active:scale-105 duration-300"
+              <div
+                onClick={fetchTripWithDate}
+                className=" relative w-[9rem] h-[2.5rem] cursor-pointer bg-green-500 text-white rounded-lg flex items-center justify-center hover:bg-green-600 transition-all ease-out active:scale-105 duration-300"
               >
-                Fetch Report
-              </button>
+                {isLoading2 ? <ButtonLoading /> : "Fetch Report"}
+              </div>
             </div>
           </div>
 
-          <div className="mt-6 ">
-            <table className="w-full border-collapse min-w-max overflow-x-auto">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="p-2 border text-sm sm:text-base">Bus No</th>
-                  <th className="p-2 border text-sm sm:text-base">
-                    Start Point
-                  </th>
-                  <th className="p-2 border text-sm sm:text-base">
-                    Driver Name
-                  </th>
-                  <th className="p-2 border text-sm sm:text-base">
-                    Helper Name
-                  </th>
-                  <th className="p-2 border text-sm sm:text-base">
-                    No. of Students
-                  </th>
-                  <th className="p-2 border text-sm sm:text-base">Trip Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="text-sm sm:text-base">
-                  <td className="p-2 border">101</td>
-                  <td className="p-2 border">Main Station</td>
-                  <td className="p-2 border">John Doe</td>
-                  <td className="p-2 border">Jane Doe</td>
-                  <td className="p-2 border">30</td>
-                  <td className="p-2 border">14/02/2025</td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="flex justify-end">
+          <div className="mt-6 relative ">
+            <TripTable data={trips} />
+            {
+              trips && trips.length > 0 && <div className="flex justify-end">
               <button className="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg text-sm sm:text-base active:scale-95 transition-all duration-300 ease-out">
                 Download PDF
               </button>
             </div>
+            }
           </div>
         </div>
       </div>

@@ -138,14 +138,14 @@ export default function DashboardLayout({ children, params }) {
   return (
     <div className=" font-Georama max-h-[100vh] overflow-x-hidden ">
       <div className="">
-        <div className=" relative flex rounded-md min-h-[100vh] overflow-hidden">
+        <div className=" relative flex min-h-[100vh] w-full overflow-hidden">
           <div
             ref={optionRef}
             className={` ${
               sideBarOpen
                 ? "inboxSideBarOpen w-[20rem] "
                 : "inboxSideBarClose w-[3.5rem] "
-            } bg-[#2C2C2C] z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-5 overflow-y-auto `}
+            } bg-[#2C2C2C] flex-shrink-0 z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-5 overflow-y-auto `}
           >
             <div>
               <div className=" h-[5rem] ">
@@ -167,25 +167,25 @@ export default function DashboardLayout({ children, params }) {
                         }}
                         className={`cursor-pointer ${
                           currentPath === item.pathName
-                            ? "bg-green-50  text-[#00712D] "
+                            ? "bg-green-50  text-green-500 "
                             : "text-[#fff]"
-                        } group flex items-center gap-4 text-[1.1rem] hover:bg-green-50 rounded-md hover:text-[#00712D] px-3 ${
+                        } group flex items-center gap-4 text-[1.1rem] hover:bg-green-50 rounded-md hover:text-green-500 px-3 ${
                           sideBarOpen ? "" : "justify-center"
                         }  py-2   transition-all duration-300 ease-in-out font-medium  `}
                       >
                         <div
                           className={`${
                             currentPath === item.pathName
-                              ? "text-[#00712D]"
+                              ? "text-green-500"
                               : "text-white"
-                          } group-hover:text-[#00712D] transition-all duration-300 ease-linear`}
+                          } group-hover:text-green-500 transition-all duration-300 ease-linear`}
                         >
                           {item.icon}
                         </div>
                         <span
                           className={` ${
                             sideBarOpen ? "" : "hidden"
-                          }  group-hover:text-[#00712D]`}
+                          }  group-hover:text-green-500`}
                         >
                           {item.title}
                         </span>
@@ -213,7 +213,7 @@ export default function DashboardLayout({ children, params }) {
             </div>
           </div>
 
-          <div className="flex-1 md:ml-0 ml-[3rem] w-full ">
+          <div className=" flex-1 max-w-[100vw] md:pl-0 pl-[3.4rem] ">
             <div className=" flex items-center justify-between w-full px-5 h-[4.5rem] bg-[#2C2C2C]  ">
               <h3 className=" text-[2rem] font-medium text-white ">
                 Dashboard
@@ -222,7 +222,7 @@ export default function DashboardLayout({ children, params }) {
                 <FaRegUser className=" text-[1.2rem] " />
               </div>
             </div>
-            <div className=" h-[calc(100vh-4.5rem)] overflow-y-auto p-2 ">
+            <div className=" h-[calc(100vh-4.5rem)] w-full relative overflow-y-auto p-2 pb-[1.5rem] ">
               {children}
             </div>
           </div>
