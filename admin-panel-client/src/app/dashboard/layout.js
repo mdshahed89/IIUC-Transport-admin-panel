@@ -16,6 +16,10 @@ import { BsInfoSquare } from "react-icons/bs";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import LoadingPage from "@/components/PageLoading";
 import { FaRegUser } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
+import { VscFeedback } from "react-icons/vsc";
+import { ProfileModal } from "@/components/Modals";
+
 
 // export const metadata = {
 //   title: "Konsolenttorget Register",
@@ -30,9 +34,14 @@ export default function DashboardLayout({ children, params }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // window.scrollTo(0, 0);
+    if(window.innerWidth < 768){
+      setSideBarOpen(false)
+    }
     setIsLoading(false);
   }, []);
+
+  // console.log("ii", id);
+  
 
   const router = useRouter();
 
@@ -53,40 +62,27 @@ export default function DashboardLayout({ children, params }) {
     };
   }, []);
 
-  //   useEffect(() => {
-  //     const checkAuth = async () => {
-  //       const tkn = localStorage.getItem("token");
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const decodeToken = jwtDecode(userData.token);
 
-  //       if (!tkn) {
-  //         localStorage.removeItem("userData");
-  //         router.push("/loggin");
-  //         return;
-  //       }
+        if (decodeToken?.role !== "Super Admin") {
+          router.push("/");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        setUserData({})
+        router.push("/");
+      }
+    };
 
-  //       try {
-  //         const decodeToken = jwtDecode(tkn);
-
-  //         if (tkn && userData?.email && decodeToken.email !== userData?.email) {
-  //           sessionStorage.removeItem("userData");
-  //           router.push("/loggin");
-  //         }
-  //         // setToken(tkn)
-  //       } catch (error) {
-  //         console.error("Error decoding token:", error);
-  //         router.push("/loggin");
-  //       } finally {
-  //         setIsLoading(false);
-  //       }
-  //     };
-
-  //     checkAuth();
-  //   }, [router, userData]);
-
-  const [expandedItem, setExpandedItem] = useState(null);
-
-  const toggleSubMenu = (index) => {
-    setExpandedItem(expandedItem === index ? null : index);
-  };
+    if (userData?.token) {
+      checkAuth();
+    } else {
+      router.push("/");
+    }
+  }, [router, userData]);
 
   const items = [
     {
@@ -129,11 +125,16 @@ export default function DashboardLayout({ children, params }) {
       icon: <IoMdNotificationsOutline className=" text-[1.4rem] " />,
       pathName: `/dashboard/notification`,
     },
+    {
+      title: "Feedback",
+      icon: <VscFeedback className=" text-[1.4rem] " />,
+      pathName: `/dashboard/feedback`,
+    },
   ];
 
-  // if (isLoading) {
-  //   return <LoadingPage />;
-  // }
+  if (isLoading) {
+    return <LoadingPage />;
+  }
 
   return (
     <div className=" font-Georama max-h-[100vh] overflow-x-hidden ">
@@ -218,9 +219,7 @@ export default function DashboardLayout({ children, params }) {
               <h3 className=" text-[2rem] font-medium text-white ">
                 Dashboard
               </h3>
-              <div className=" border-2 p-2 rounded-full border-gray-500 text-gray-300  ">
-                <FaRegUser className=" text-[1.2rem] " />
-              </div>
+              <ProfileModal id={id} />
             </div>
             <div className=" h-[calc(100vh-4.5rem)] w-full relative overflow-y-auto p-2 pb-[1.5rem] ">
               {children}

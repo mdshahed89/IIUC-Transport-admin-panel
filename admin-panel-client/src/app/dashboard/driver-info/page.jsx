@@ -5,6 +5,7 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { SubPageLoading } from "@/components/PageLoading";
+import { toast } from "react-toastify";
 
 const Page = () => {
   const [drivers, setDrivers] = useState([]);

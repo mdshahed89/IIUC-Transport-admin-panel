@@ -1,13 +1,14 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const DataContext = createContext();
 
 export const DataProvider = ({ children }) => {
   const [userData, setUserData] = useState(() => {
     if (typeof window !== "undefined") {
-      const savedUserData = sessionStorage.getItem("userData");
+      const savedUserData = localStorage.getItem("userData");
       return savedUserData ? JSON.parse(savedUserData) : {};
     }
     return {};
@@ -21,8 +22,7 @@ export const DataProvider = ({ children }) => {
 
   const logout = () => {
     setUserData({});
-    sessionStorage.removeItem("userData");
-    sessionStorage.removeItem("token");
+    localStorage.removeItem("userData");
   };
 
   return (

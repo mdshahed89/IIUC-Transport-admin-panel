@@ -1,24 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useData } from "./context/Context";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { ButtonLoading } from "@/components/PageLoading";
+import { jwtDecode } from "jwt-decode";
 
 export default function Home() {
   // const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("")
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { userData, setUserData } = useData();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // console.log("url",process.env.NEXT_PUBLIC_BACKEND_URL);
+  // useEffect(() => {
+  //   const checkAuth = async () => {
+  //     try {
+  //       const decodeToken = jwtDecode(userData.token || "");
+  //       if (decodeToken?.role === "Super Admin") {
+  //         router.push("/dashboard");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error decoding token:", error);
+  //     }
+  //   };
+  //   if (userData?.token) {
+  //     checkAuth();
+  //   }
+  // }, [router, userData]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/auth/login`,
@@ -30,15 +47,18 @@ export default function Home() {
           body: JSON.stringify({ email, password }),
         }
       );
-
       const data = await response.json();
-
-      // console.log(data);
-      
-      if (response.ok) {
+      if (response.ok && data?.token) {
         console.log("Login successful:", data);
+        const decodeToken = jwtDecode(data?.token || "");
         toast.success("Login Successfully");
-      router.push("/dashboard");
+        setUserData({
+          email: email,
+          token: data?.token || "",
+          id: decodeToken?.id,
+          role: decodeToken?.role
+        });
+        router.push("/dashboard");
       } else {
         console.error("Login failed:", data.message || "Unknown error");
         toast.error("Failed to login, Please try again");
@@ -46,10 +66,12 @@ export default function Home() {
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to login, Please try again");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // console.log(username, password);
+  // console.log("uu",userData);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-900 px-4 font-Georama">
@@ -63,7 +85,7 @@ export default function Home() {
         <h2 className="text-white text-2xl font-semibold text-center mb-6">
           Admin Login
         </h2>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -94,13 +116,15 @@ export default function Home() {
               required
             />
           </motion.div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="w-full bg-green-600 text-white py-3 rounded-lg font-medium transition-all"
-          >
-            Login
-          </motion.button>
+          <div className=" pt-5 ">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="w-full relative shadow-inner h-[3rem] bg-green-600 text-white  rounded-lg font-medium transition-all"
+            >
+              {loading ? <ButtonLoading /> : "Login"}
+            </motion.button>
+          </div>
         </form>
       </motion.div>
     </div>

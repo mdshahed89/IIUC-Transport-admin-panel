@@ -64,7 +64,7 @@ export function HelperTable({ helpers, fetchHelpers }) {
     <div className="overflow-x-auto">
       <table className=" w-full mx-auto border shadow-md border-gray-100 my-6">
         <thead>
-          <tr className="bg-green-500 text-white">
+          <tr className="bg-[#666666] text-white">
             <th className="py-3 px-4 text-center whitespace-nowrap border-b">
               Helper Name
             </th>
@@ -155,7 +155,7 @@ export function DriverTable({ drivers, fetchDrivers }) {
     <div className="overflow-x-auto">
       <table className=" w-full mx-auto border shadow-md border-gray-100 my-6">
         <thead>
-          <tr className="bg-green-500 text-white">
+          <tr className="bg-[#666666] text-white">
             <th className="py-3 px-4 text-center whitespace-nowrap border-b">
               Driver Name
             </th>
@@ -229,7 +229,7 @@ export function TripTable({ data }) {
       {data && Array.isArray(data) && data.length > 0 ? (
         <table className=" w-full mx-auto border shadow-md border-gray-100 my-6">
           <thead>
-            <tr className="bg-green-500 text-white">
+            <tr className="bg-[#666666] text-white">
               <th className="py-3 px-4 text-center whitespace-nowrap border-b">
                 Bus No
               </th>
@@ -241,6 +241,12 @@ export function TripTable({ data }) {
               </th>
               <th className="py-3 px-4 text-center whitespace-nowrap border-b">
                 Helper Name
+              </th>
+              <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+                Sub Driver Name
+              </th>
+              <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+                Sub Helper Name
               </th>
               <th className="py-3 px-4 text-center whitespace-nowrap border-b">
                 No. of Students
@@ -267,6 +273,12 @@ export function TripTable({ data }) {
                 </td>
                 <td className="py-4 px-2 whitespace-nowrap text-center">
                   {dt?.helperName}
+                </td>
+                <td className="py-4 px-2 whitespace-nowrap text-center">
+                  {dt?.subDriverName}
+                </td>
+                <td className="py-4 px-2 whitespace-nowrap text-center">
+                  {dt?.subHelperName}
                 </td>
                 <td className="py-4 px-2 whitespace-nowrap text-center">
                   {dt?.noOfStudents}
