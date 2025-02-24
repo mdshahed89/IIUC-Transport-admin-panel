@@ -7,7 +7,7 @@ const AssignedBuses = async ({ searchParams }) => {
 
   let busData;
   if (!edit && !add) {
-    busData = await getAssignBus();
+    busData = (await getAssignBus()) || [];
   }
 
   return (
@@ -15,7 +15,7 @@ const AssignedBuses = async ({ searchParams }) => {
       {edit || add ? (
         <AssignBusForm edit={edit} />
       ) : (
-        <div className="p-8 flex-1 overflow-y-auto">
+        <div className="p-8 flex-1 overflow-auto">
           <div className="container mx-auto p-6">
             <h2 className="text-3xl font-semibold text-center mb-6">
               Assigned Buses

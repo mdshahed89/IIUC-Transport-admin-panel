@@ -1,12 +1,14 @@
 "use client";
-import Button from "@/components/Button";
 import { InputField } from "@/components/FormField";
 import { Table, Td } from "@/components/Table";
 import { deleteDataAndRevalidatePath } from "@/lib/fetchData";
 import { CiEdit } from "react-icons/ci";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdOutlineDeleteOutline } from "react-icons/md";
 import Link from "next/link";
 import React, { useState } from "react";
+import Button from "@/components/Button";
+import { IoPersonAddSharp } from "react-icons/io5";
+import { GiCheckMark } from "react-icons/gi";
 
 const tableHeaders = [
   "Bus Number",
@@ -16,6 +18,7 @@ const tableHeaders = [
   "Driver Phone",
   "Helper Name",
   "Helper Phone",
+  "Status",
   "Actions",
 ];
 
@@ -27,7 +30,7 @@ const Content = ({ buses }) => {
     setFilter(e.target.value);
   };
 
-  // Filter bus by bus n, driver name and number, helper name and number
+  // Filter bus by bus no, driver name and number, helper name and number
   const fillterBus = (bus) =>
     filter
       ? bus.busNo.toString().toLowerCase().includes(filter.toLowerCase()) ||
@@ -43,15 +46,23 @@ const Content = ({ buses }) => {
       revalidtionPath: "/dashboard/bus-details",
     });
   };
+
   return (
     <>
-      <div className="flex justify-center mb-6">
+      <div className="w-full flex-col sm:flex-row flex justify-between mb-6 gap-4">
         <InputField
           placeholder="Search by Bus Number, Driver, or Helper..."
           value={filter}
           onChange={handleFilter}
+          classes="w-full sm:w-1/3"
         />
+        <Link href="/dashboard/bus-details?add=true">
+          <Button bg="green" classes="flex gap-2 items-center">
+            <IoPersonAddSharp /> Add New Bus
+          </Button>
+        </Link>
       </div>
+
       <Table tableHeaders={tableHeaders}>
         {buses?.filter(fillterBus).map((bus, index) => {
           const {
@@ -63,6 +74,7 @@ const Content = ({ buses }) => {
             driverPhone,
             helperName,
             helperPhone,
+            isActive,
           } = bus || {};
 
           return (
@@ -75,18 +87,39 @@ const Content = ({ buses }) => {
               <Td>{helperName}</Td>
               <Td>{helperPhone}</Td>
               <Td>
-                <div className="flex gap-2">
-                  <Link href={`/dashboard/bus-details?edit=${id}`}>
-                    <Button classes="bg-transparent border px-2">
-                      <CiEdit size={24} className="text-blue-400" />
-                    </Button>
-                  </Link>
-                  <Button
-                    classes="bg-transparent border px-2"
-                    onClick={() => deleteBusDetails(id)}
+                {isActive ? (
+                  <div>
+                    <div
+                      className=" rounded-full shadow-inner cursor-pointer p-2 max-w-min mx-auto bg-slate-100"
+                      // onClick={() => scaheduleStatusToggle(id, isActive)}
+                    >
+                      <GiCheckMark className="text-green-500" />
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    className=" rounded-full shadow-inner cursor-pointer p-2 max-w-min mx-auto bg-slate-100"
+                    // onClick={() => scaheduleStatusToggle(id, isActive)}
                   >
-                    <MdDeleteOutline size={24} className="text-red-500" />
-                  </Button>
+                    <GiCheckMark className="text-gray-600" />
+                  </div>
+                )}
+              </Td>
+              <Td>
+                <div className="h-full flex items-center justify-center gap-2 text-[1.4rem]  ">
+                  {/* <div
+                    onClick={() => deleteBusDetails(id)}
+                    className="bg-red-50 p-2 text-red-500 rounded-full shadow-inner cursor-pointer"
+                  >
+                    <MdOutlineDeleteOutline />
+                  </div> */}
+
+                  <Link
+                    href={`/dashboard/bus-details?edit=${id}`}
+                    className="bg-slate-100 p-2 rounded-full shadow-inner cursor-pointer"
+                  >
+                    <CiEdit />
+                  </Link>
                 </div>
               </Td>
             </tr>

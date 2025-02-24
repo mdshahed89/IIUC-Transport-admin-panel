@@ -6,34 +6,33 @@ import { toast } from "react-toastify";
 
 export const Table = ({ tableHeaders = [], children }) => {
   return (
-    <table className="min-w-full bg-white border ">
-      <thead>
-        <tr>
-          {tableHeaders.map((heading, index) => (
-            <th
-              key={index}
-              className="py-2 px-4 border-b bg-gray-100 text-gray-700 "
-            >
-              {heading}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>{children}</tbody>
-    </table>
+    <div className="overflow-x-auto border">
+      <table className="border w-full">
+        <thead>
+          <tr>
+            {tableHeaders.map((heading, index) => (
+              <th
+                key={index}
+                className="py-2 px-4 border-b bg-gray-100 text-gray-700 text-center "
+              >
+                {heading}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>{children}</tbody>
+      </table>
+    </div>
   );
 };
 
-export const Td = ({ classes, children }) => {
+export const Td = ({ children }) => {
   return (
-    <td className={` p-2 border text-gray-700 text-center ${classes}`}>
-      {children}
-    </td>
+    <td className={`p-2 border text-gray-700 text-center  `}>{children}</td>
   );
 };
 
 export function HelperTable({ helpers, fetchHelpers }) {
-
   const deleteHelperHandler = async (id) => {
     if (!id) {
       toast.error("Helper id is required");
@@ -46,7 +45,6 @@ export function HelperTable({ helpers, fetchHelpers }) {
           method: "DELETE",
         }
       );
-
 
       if (response.ok) {
         toast.success("Helper deleted successfully!");
@@ -103,7 +101,10 @@ export function HelperTable({ helpers, fetchHelpers }) {
 
               <td className="px-2 py-2 text-center h-full">
                 <div className="h-full flex items-center justify-center gap-2 text-[1.4rem]  ">
-                  <div onClick={()=> deleteHelperHandler(helper?.id)} className="bg-red-50 p-2 text-red-500 rounded-full shadow-inner cursor-pointer">
+                  <div
+                    onClick={() => deleteHelperHandler(helper?.id)}
+                    className="bg-red-50 p-2 text-red-500 rounded-full shadow-inner cursor-pointer"
+                  >
                     <MdDeleteOutline />
                   </div>
                   <Link
@@ -137,7 +138,6 @@ export function DriverTable({ drivers, fetchDrivers }) {
           method: "DELETE",
         }
       );
-
 
       if (response.ok) {
         toast.success("Driver deleted successfully!");

@@ -1,8 +1,10 @@
 import Button from "@/components/Button";
 import { FormSelectField } from "@/components/FormField";
 import { create, editData, getBusScheduleById } from "@/lib/fetchData";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
+import { IoArrowBackSharp } from "react-icons/io5";
 
 // Schedule Type option
 const schedulesOption = [
@@ -50,9 +52,17 @@ const ScheduleForm = async ({ edit }) => {
 
   return (
     <div className="max-w-xl mx-auto my-8 p-8 bg-white md:shadow-[0px_1px_10px_rgba(0,0,0,0.15)] rounded-2xl">
-      <h2 className="text-2xl text-gray-800 font-bold mb-4">
-        {edit ? "Edit" : "Add New"} Schedule
-      </h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl text-gray-800 font-bold mb-4">
+          {edit ? "Edit" : "Add New"} Schedule
+        </h2>
+        <Link
+          href={`/dashboard/schedule`}
+          className="p-2 rounded-full bg-slate-50 shadow-inner cursor-pointer text-[1.5rem] "
+        >
+          <IoArrowBackSharp />
+        </Link>
+      </div>
       <form action={onSubmit}>
         <InputField
           label="Schedule Name"

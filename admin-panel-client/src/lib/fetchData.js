@@ -27,10 +27,12 @@ export const create = async ({ endpoint, data }) => {
 export const getData = async ({ endpoint }) => {
   try {
     const res = await fetch(`${API_LINK}${endpoint}`);
+    console.log("res", `End: ${API_LINK}${endpoint}`, res);
     const data = await res.json();
+    console.log(`End: ${API_LINK}${endpoint}`, data);
     return data;
   } catch (e) {
-    console.log(e?.message);
+    console.log(`End: ${API_LINK}${endpoint}`, e?.message);
   }
 };
 
@@ -115,4 +117,12 @@ export const getAssignBus = async () => {
 
 export const getAssignBusById = async (id) => {
   return getData({ endpoint: `/assign-bus/${id}` });
+};
+
+export const getDriverInfo = async () => {
+  return getData({ endpoint: `/driver-info` });
+};
+
+export const getHelperInfo = async () => {
+  return getData({ endpoint: `/helper-info` });
 };

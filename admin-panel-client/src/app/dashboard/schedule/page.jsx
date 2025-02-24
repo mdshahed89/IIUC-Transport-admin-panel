@@ -6,20 +6,22 @@ import ScheduleForm from "./form";
 const BusInformation = async ({ searchParams }) => {
   const { edit, add } = await searchParams;
 
-  const busSchedules = await getBusSchedules();
-  const schedules = busSchedules?.schedules || [];
+  let schedules;
+  if (!edit && !add) {
+    const busSchedules = await getBusSchedules();
+    schedules = busSchedules?.schedules || [];
+  }
+
   return (
     <>
       {edit || add ? (
         <ScheduleForm edit={edit} />
       ) : (
-        <div className="p-8 flex-1 overflow-y-auto">
-          <div className="container mx-auto p-6">
-            <h2 className="text-3xl font-semibold text-center mb-6">
-              Bus Information
-            </h2>
-            <Content schedules={schedules} />
-          </div>
+        <div className="p-4 md:p-8">
+          <h2 className="text-3xl font-semibold text-center mb-6">
+            Bus Information
+          </h2>
+          <Content schedules={schedules} />
         </div>
       )}
     </>

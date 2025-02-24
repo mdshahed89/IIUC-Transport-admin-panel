@@ -3,9 +3,9 @@ import Button from "@/components/Button";
 import { InputField, SelectField } from "@/components/FormField";
 import { Table, Td } from "@/components/Table";
 import { CiEdit } from "react-icons/ci";
-import { MdDeleteOutline } from "react-icons/md";
-import { MdCheckCircle } from "react-icons/md";
-import { MdCheckCircleOutline } from "react-icons/md";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { GiCheckMark } from "react-icons/gi";
+
 import {
   deleteDataAndRevalidatePath,
   scaheduleStatusToggle,
@@ -13,6 +13,8 @@ import {
 
 import Link from "next/link";
 import React, { useState } from "react";
+import { IoPersonAddSharp } from "react-icons/io5";
+import { convertTo12HourFormat } from "@/utils/timeFormat";
 
 // Table header
 const tableHeaders = [
@@ -108,13 +110,6 @@ const Content = ({ schedules }) => {
 
         <SelectField selectOption={scheduleOptions} getValue={handleSchedule} />
 
-        {/* Filter Schedule type */}
-        {/* <SelectField
-          options={scheduleOptions}
-          value={scheduleType}
-          onChange={handleSchedule}
-        /> */}
-
         {/* Status filter */}
         <Button bg="red" onClick={handleStatus}>
           Active/Inactive Schedule
@@ -123,10 +118,11 @@ const Content = ({ schedules }) => {
         {/* Clear filter */}
         <Button onClick={clearFilter}>Clear Filter</Button>
 
-        <Link href="/dashboard/schedule?add=true">
-          <button className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">
-            Add New Schedule
-          </button>
+        <Link
+          href="/dashboard/schedule?add=true"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 items-center"
+        >
+          <IoPersonAddSharp /> Add New Schedule
         </Link>
       </div>
 
@@ -147,45 +143,49 @@ const Content = ({ schedules }) => {
               scheduleType,
               isActive,
             } = schedule;
+            const formatedTime = convertTo12HourFormat(time);
             return (
               <tr key={index}>
                 <Td>{scheduleName}</Td>
                 <Td>{route}</Td>
                 <Td>{startPoint}</Td>
                 <Td>{endPoint}</Td>
-                <Td>{time}</Td>
+                <Td>{formatedTime}</Td>
                 <Td>{scheduleType}</Td>
                 <Td>
                   {isActive ? (
-                    <Button
-                      classes="bg-transparent border"
-                      onClick={() => scaheduleStatusToggle(id, isActive)}
-                    >
-                      <MdCheckCircle className="text-green-500" />
-                    </Button>
+                    <div>
+                      <div
+                        className=" rounded-full shadow-inner cursor-pointer p-2 max-w-min mx-auto bg-slate-100"
+                        onClick={() => scaheduleStatusToggle(id, isActive)}
+                      >
+                        <GiCheckMark className="text-green-500" />
+                      </div>
+                    </div>
                   ) : (
-                    <Button
-                      classes="bg-transparent border "
+                    <div
+                      className=" rounded-full shadow-inner cursor-pointer p-2 max-w-min mx-auto bg-slate-100"
                       onClick={() => scaheduleStatusToggle(id, isActive)}
                     >
-                      <MdCheckCircleOutline className="text-gray-600" />
-                    </Button>
+                      <GiCheckMark className="text-gray-600" />
+                    </div>
                   )}
                 </Td>
                 <Td>
-                  <div className="flex gap-2">
-                    <Link href={`/dashboard/schedule?edit=${id}`}>
-                      <Button classes="bg-transparent border px-2">
-                        <CiEdit size={24} className="text-blue-400" />
-                      </Button>
-                    </Link>
-
-                    <Button
-                      classes="bg-transparent border px-2"
+                  <div className="h-full flex items-center justify-center gap-2 text-[1.4rem]  ">
+                    <div
                       onClick={() => deleteBusSchedules(id)}
+                      className="bg-red-50 p-2 text-red-500 rounded-full shadow-inner cursor-pointer"
                     >
-                      <MdDeleteOutline size={24} className="text-red-500" />
-                    </Button>
+                      <MdOutlineDeleteOutline />
+                    </div>
+
+                    <Link
+                      href={`/dashboard/schedule?edit=${id}`}
+                      className="bg-slate-100 p-2 rounded-full shadow-inner cursor-pointer"
+                    >
+                      <CiEdit />
+                    </Link>
                   </div>
                 </Td>
               </tr>

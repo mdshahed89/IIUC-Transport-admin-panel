@@ -1,13 +1,14 @@
 "use client";
-import Button from "@/components/Button";
 import { InputField, SelectField } from "@/components/FormField";
 import { Table, Td } from "@/components/Table";
 import { deleteDataAndRevalidatePath } from "@/lib/fetchData";
 import { CiEdit } from "react-icons/ci";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdOutlineDeleteOutline } from "react-icons/md";
+import { IoPersonAddSharp } from "react-icons/io5";
 
 import Link from "next/link";
 import React, { useState } from "react";
+import { convertTo12HourFormat } from "@/utils/timeFormat";
 
 const tableHeaders = [
   "Bus Number",
@@ -15,13 +16,15 @@ const tableHeaders = [
   "Road",
   "Bus Type",
   "Gender",
+  "Time",
+  "Status",
   "Actions",
 ];
 
 const userOption = ["All Types", "Students", "Teachers", "Staff"];
 
 const Content = ({ busData = [] }) => {
-  const [busNumber, setBusNumber] = useState();
+  const [busNumber, setBusNumber] = useState("");
   const [busType, setBusType] = useState("All Types");
 
   // Handler
@@ -34,7 +37,11 @@ const Content = ({ busData = [] }) => {
 
   // Filter
   const filterByBusNumber = (bus) =>
-    busNumber ? bus?.busNo.toString().includes(busNumber.toString()) : true;
+    busNumber
+      ? bus?.busNo.toString().includes(busNumber.toString()) ||
+        bus?.scheduleName.toString().includes(busNumber.toString())
+      : true;
+
   const filterByBusType = (bus) =>
     busType === "All Types" ? true : bus?.busType === busType;
 
@@ -50,7 +57,7 @@ const Content = ({ busData = [] }) => {
     <>
       <div className="flex justify-between items-center mb-4">
         <InputField
-          placeholder="Search by Bus Number"
+          placeholder="Search by Bus Number and slot name"
           type="number"
           value={busNumber}
           onChange={handleBusNumebr}
@@ -58,9 +65,9 @@ const Content = ({ busData = [] }) => {
         <SelectField selectOption={userOption} getValue={handleBusType} />
         <Link
           href="/dashboard/assigned-bus?add=true"
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded flex gap-2 items-center"
         >
-          Assign New Bus
+          <IoPersonAddSharp /> Assign New Bus
         </Link>
       </div>
       <Table tableHeaders={tableHeaders}>
@@ -76,8 +83,8 @@ const Content = ({ busData = [] }) => {
               Gender,
               scheduleDetails = {},
             } = bus || {};
-            const { route, helperName, driverName, status } =
-              scheduleDetails || {};
+            const { route, time } = scheduleDetails || {};
+            const fotmatedTime = convertTo12HourFormat(time);
             return (
               <tr key={id}>
                 <Td>{busNo}</Td>
@@ -85,20 +92,23 @@ const Content = ({ busData = [] }) => {
                 <Td>{route || "N/A"}</Td>
                 <Td>{busType}</Td>
                 <Td>{Gender || "N/A"}</Td>
+                <Td>{fotmatedTime}</Td>
+                <Td>{Gender || "N/A"}</Td>
 
                 <Td>
-                  <div className="flex gap-2">
-                    <Link href={`/dashboard/assigned-bus?edit=${id}`}>
-                      <Button classes="bg-transparent border px-2">
-                        <CiEdit size={24} className="text-blue-400" />
-                      </Button>
-                    </Link>
-                    <Button
-                      classes="bg-transparent border px-2"
+                  <div className="h-full flex items-center justify-center gap-2 text-[1.4rem]  ">
+                    <div
                       onClick={() => deleteAssignbus(id)}
+                      className="bg-red-50 p-2 text-red-500 rounded-full shadow-inner cursor-pointer"
                     >
-                      <MdDeleteOutline size={24} className="text-red-500" />
-                    </Button>
+                      <MdOutlineDeleteOutline />
+                    </div>
+                    <Link
+                      href={`/dashboard/assigned-bus?edit=${id}`}
+                      className="bg-slate-100 p-2 rounded-full shadow-inner cursor-pointer"
+                    >
+                      <CiEdit />
+                    </Link>
                   </div>
                 </Td>
               </tr>

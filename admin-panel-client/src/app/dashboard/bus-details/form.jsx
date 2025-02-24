@@ -1,10 +1,23 @@
 import Button from "@/components/Button";
-import { create, editData, getBusInfoById } from "@/lib/fetchData";
+
+import {
+  create,
+  editData,
+  getBusInfoById,
+  getDriverInfo,
+  getHelperInfo,
+} from "@/lib/fetchData";
 import { redirect } from "next/navigation";
+import NameAndPhoneSelect from "./NameAndPhoneSelect";
+import { IoArrowBackSharp } from "react-icons/io5";
+import Link from "next/link";
 
 const BusInfoForm = async ({ edit }) => {
   const editId = Number(edit);
   let editAbleBus;
+
+  const driverInfo = await getDriverInfo();
+  const helperInfo = await getHelperInfo();
 
   if (edit) {
     // Get editable data
@@ -26,7 +39,11 @@ const BusInfoForm = async ({ edit }) => {
   const onSubmit = async (formData) => {
     "use server";
     const fromEntries = Object.fromEntries(formData.entries());
-    const data = { ...fromEntries, busNo: Number(fromEntries.busNo) };
+    const data = {
+      ...fromEntries,
+      busNo: Number(fromEntries.busNo),
+      capacity: Number(fromEntries.capacity),
+    };
 
     if (edit) {
       const edited = await editData({ endpoint: `/bus-info${editId}`, data });
@@ -43,9 +60,17 @@ const BusInfoForm = async ({ edit }) => {
 
   return (
     <div className="max-w-3xl mx-auto my-8 p-8 bg-white md:shadow-[0px_1px_10px_rgba(0,0,0,0.15)] rounded-2xl">
-      <h2 className="text-2xl font-bold mb-4">
-        {edit ? "Edit Assign Bus" : "Assign New"} Bus
-      </h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold mb-4">
+          {edit ? "Edit" : "Add"} Bus Info
+        </h2>
+        <Link
+          href={`/dashboard/bus-details`}
+          className=" p-2 rounded-full bg-slate-50 shadow-inner cursor-pointer text-[1.5rem] "
+        >
+          <IoArrowBackSharp />
+        </Link>
+      </div>
       <form action={onSubmit}>
         <InputField
           label="Bus Number"
@@ -60,30 +85,10 @@ const BusInfoForm = async ({ edit }) => {
           name="vehicleId"
           required
         />
-        <InputField
-          label="Driver Name"
-          defaultValue={driverName}
-          name="driverName"
-          required
-        />
-        <InputField
-          label="Driver Phone"
-          defaultValue={driverPhone}
-          name="driverPhone"
-          required
-        />
-        <InputField
-          label="helper Name"
-          defaultValue={helperName}
-          name="helperName"
-          required
-        />
-        <InputField
-          label="Helper Phone"
-          defaultValue={helperPhone}
-          name="helperPhone"
-          required
-        />
+
+        <NameAndPhoneSelect name="driver" label="Driver" data={driverInfo} />
+        <NameAndPhoneSelect name="helper" label="Helper" data={helperInfo} />
+
         <InputField
           label="Capacity"
           defaultValue={capacity}
@@ -109,6 +114,7 @@ const InputField = ({
   required = false,
   name = "",
   defaultValue,
+  readOnly = false,
 }) => (
   <div className="mb-4">
     <label
@@ -123,6 +129,7 @@ const InputField = ({
       required={required}
       name={name}
       defaultValue={defaultValue}
+      readOnly={readOnly}
       className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
     />
   </div>
