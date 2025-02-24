@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 const Page = () => {
   const [drivers, setDrivers] = useState([]);
   const [isLoading1, setIsLoading1] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchDrivers = async () => {
     setIsLoading1(true);
@@ -40,6 +41,16 @@ const Page = () => {
   useEffect(() => {
     fetchDrivers();
   }, []);
+
+
+  const filteredDrivers = drivers.filter((driver) =>
+    Object.values(driver).some((value) =>
+      String(value).toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+  
+
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -61,12 +72,14 @@ const Page = () => {
         <input
           type="text"
           placeholder="Search by Name, ID, Phone no, Address"
+          value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
           className=" outline-none border-2 rounded-md focus:border-green-500 transition-all duration-300 ease-in-out p-2 max-w-[40rem] w-full "
         />
       </div>
       <div className=' relative min-h-[20rem] '>
             {
-              isLoading1 ? <SubPageLoading /> : <DriverTable drivers={drivers} fetchDrivers={fetchDrivers} />
+              isLoading1 ? <SubPageLoading /> : <DriverTable drivers={filteredDrivers} fetchDrivers={fetchDrivers} />
             }
             </div>
     </motion.div>

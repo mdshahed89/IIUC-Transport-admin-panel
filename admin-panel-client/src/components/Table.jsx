@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 import { toast } from "react-toastify";
@@ -224,8 +225,58 @@ export function DriverTable({ drivers, fetchDrivers }) {
 }
 
 export function TripTable({ data }) {
+
+  const tableRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  useEffect(() => {
+    const tableContainer = tableRef.current;
+    if (!tableContainer) return;
+
+    const handleMouseDown = (e) => {
+      setIsDragging(true);
+      setStartX(e.pageX - tableContainer.offsetLeft);
+      setScrollLeft(tableContainer.scrollLeft);
+      tableContainer.style.cursor = "grabbing"; // Change cursor
+      e.preventDefault(); // Prevent text selection
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+      const x = e.pageX - tableContainer.offsetLeft;
+      const walk = (x - startX) * 2; // Adjust speed
+      tableContainer.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      tableContainer.style.cursor = "grab";
+    };
+
+    tableContainer.addEventListener("mousedown", handleMouseDown);
+    tableContainer.addEventListener("mousemove", handleMouseMove);
+    tableContainer.addEventListener("mouseup", handleMouseUp);
+    tableContainer.addEventListener("mouseleave", handleMouseUp);
+
+    return () => {
+      tableContainer.removeEventListener("mousedown", handleMouseDown);
+      tableContainer.removeEventListener("mousemove", handleMouseMove);
+      tableContainer.removeEventListener("mouseup", handleMouseUp);
+      tableContainer.removeEventListener("mouseleave", handleMouseUp);
+    };
+  }, [isDragging, startX, scrollLeft]);
+
   return (
-    <div className="overflow-x-auto">
+    <div ref={tableRef}
+      className="overflow-x-auto cursor-grab select-none" // Disable text selection
+      style={{
+        whiteSpace: "nowrap", 
+        userSelect: "none", // Prevents text selection
+        WebkitUserSelect: "none", // Prevents selection in Safari
+        MsUserSelect: "none", // Prevents selection in IE
+      }}>
       {data && Array.isArray(data) && data.length > 0 ? (
         <table className=" w-full mx-auto border shadow-md border-gray-100 my-6">
           <thead>
@@ -293,6 +344,109 @@ export function TripTable({ data }) {
       ) : (
         <h4 className=" text-center text-gray-500 ">Data Not Found</h4>
       )}
+    </div>
+  );
+}
+
+export function UserTable({ users, fetchUsers, token, adminId }) {
+
+
+  const deleteUserHandler = async (id) => {
+    if (!token) {
+      toast.error("You are not authenticated to remove user");
+      return;
+    }
+    if (!id) {
+      toast.error("User id is required");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/users/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success("User removed successfully!");
+        fetchUsers();
+      } else {
+        toast.error(data.message || "Failed to remove driver!");
+      }
+    } catch (error) {
+      toast.error("Something went wrong! Please try again.");
+      console.error("Error submitting user delete:", error);
+    }
+  };
+
+  return (
+    <div className="overflow-x-auto " 
+    >
+      <table className=" w-full mx-auto border shadow-md border-gray-100 my-6">
+        <thead>
+          <tr className="bg-[#666666] text-white">
+            {/* <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              ID
+            </th> */}
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Name
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Email
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Role
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user, idx) => (
+            <tr
+              key={idx}
+              className="hover:bg-gray-50 transition duration-300 border-b"
+            >
+              {/* <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.id}
+              </td> */}
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.name}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.email}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.role}
+              </td>
+              <td className="px-2 py-2 text-center h-full">
+                {
+                  user?.role === "Super Admin" ? "N/A" : <div className="h-full flex items-center justify-center gap-2 text-[1.4rem]  ">
+                  <div
+                    onClick={() => deleteUserHandler(user?.id)}
+                    className="bg-red-50 p-2 text-red-500 rounded-full shadow-inner cursor-pointer"
+                  >
+                    <MdDeleteOutline />
+                  </div>
+                  <Link
+                    href={`/dashboard/profile/${adminId}/edit-user/${user?.id}`}
+                    className="bg-slate-100 p-2 rounded-full shadow-inner cursor-pointer"
+                  >
+                    <CiEdit />
+                  </Link>
+                </div>
+                }
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
