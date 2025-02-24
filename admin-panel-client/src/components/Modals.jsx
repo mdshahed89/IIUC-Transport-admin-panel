@@ -9,7 +9,7 @@ import { FiLogOut } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 
-export const ProfileModal = ({ id }) => {
+export const ProfileModal = ({ id, isPathInItems }) => {
   const { userData, logout } = useData();
   const [open, setOpen] = useState(false);
   const dropDownRef = useRef(null);
@@ -36,9 +36,10 @@ export const ProfileModal = ({ id }) => {
   const handleLogout = async () => {
     logout();
     toast.success("Logout Successfully!!");
+    router.push("/")
   };
 
-  console.log("ddd", route);
+  // console.log("ddd", route);
   
 
   return (
@@ -55,7 +56,19 @@ export const ProfileModal = ({ id }) => {
             : "invisible translate-y-4"
         } absolute top-16 right-0 z-50 w-[15rem] p-[1rem] flex flex-col gap-1 rounded-xl bg-white shadow-[0px_5px_30px_rgba(0,0,0,0.15)]`}
       >
-        {route === "/dashboard" ? (
+        {isPathInItems ? (
+          <Link
+          href={`/dashboard/profile/${userData?.id}`}
+          onClick={() => {
+            setOpen(!open)
+            sessionStorage.removeItem("route")
+          }}
+          className={` rounded-md hover:bg-green-50 bg-slate-50 hover:text-green-500 cursor-pointer transition-colors duration-300 ease-in-out p-2 font-semibold  `}
+        >
+          Profile
+        </Link>
+          
+        ) : (
           <Link
             href={`/dashboard`}
             onClick={() => {
@@ -65,17 +78,6 @@ export const ProfileModal = ({ id }) => {
             className={` rounded-md hover:bg-green-50 bg-slate-50 hover:text-green-500 cursor-pointer transition-colors duration-300 ease-in-out p-2 font-semibold  `}
           >
             Dashboard
-          </Link>
-        ) : (
-          <Link
-            href={`/dashboard/profile/${userData?.id}`}
-            onClick={() => {
-              setOpen(!open)
-              sessionStorage.removeItem("route")
-            }}
-            className={` rounded-md hover:bg-green-50 bg-slate-50 hover:text-green-500 cursor-pointer transition-colors duration-300 ease-in-out p-2 font-semibold  `}
-          >
-            Profile
           </Link>
         )}
 

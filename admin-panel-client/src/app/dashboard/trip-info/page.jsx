@@ -1,5 +1,5 @@
 "use client";
-import { ButtonLoading } from "@/components/PageLoading";
+import { ButtonLoading, SubPageLoading } from "@/components/PageLoading";
 import { TripTable } from "@/components/Table";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -214,7 +214,11 @@ const BusTripManagement = () => {
           </div>
 
           <div className="mt-6 relative ">
-            <TripTable data={trips} />
+            {
+              isLoading3 ? <div className=" relative min-h-[20rem] ">
+                <SubPageLoading />
+              </div> : <TripTable data={trips} />
+            }
             {
               trips && trips.length > 0 && <div className="flex justify-end">
               <button className="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg text-sm sm:text-base active:scale-95 transition-all duration-300 ease-out">

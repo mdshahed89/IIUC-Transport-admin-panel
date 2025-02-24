@@ -12,7 +12,7 @@ const Page = () => {
     driverName: "",
       driverID: "",
       phone: "",
-      driverAddress: "",
+      address: "",
       driverNID: "",
       driverLicense: "",
     });
@@ -46,7 +46,7 @@ const Page = () => {
               driverName: "",
                 driverID: "",
                 phone: "",
-                driverAddress: "",
+                address: "",
                 driverNID: "",
                 driverLicense: "",
               });
@@ -127,9 +127,9 @@ const Page = () => {
                 </label>
                 <input
                   type="text"
-                  name="driverAddress"
-                  value={driverDetails.driverAddress}
-                  onChange={(e) => handleChange("driverAddress", e.target.value)}
+                  name="address"
+                  value={driverDetails.address}
+                  onChange={(e) => handleChange("address", e.target.value)}
                   placeholder="Enter driver address"
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
