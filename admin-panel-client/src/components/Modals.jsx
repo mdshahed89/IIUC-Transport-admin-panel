@@ -2,7 +2,7 @@
 
 import { useData } from "@/app/context/Context";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
@@ -16,13 +16,14 @@ export const ProfileModal = ({ id, isPathInItems }) => {
   const router = useRouter();
   const [route, setRoute] = useState("");
 
+  const pathname = usePathname(); 
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const rt = sessionStorage.getItem("route")
       setRoute(rt || "");
     }
-  }, [route, router, open]);
+  }, [pathname]);
 
   useEffect(() => {
     const close = (e) => {
@@ -56,7 +57,19 @@ export const ProfileModal = ({ id, isPathInItems }) => {
             : "invisible translate-y-4"
         } absolute top-16 right-0 z-50 w-[15rem] p-[1rem] flex flex-col gap-1 rounded-xl bg-white shadow-[0px_5px_30px_rgba(0,0,0,0.15)]`}
       >
-        {isPathInItems ? (
+        {route !== "/dashboard" ? 
+        (
+          <Link
+            href={`/dashboard`}
+            onClick={() => {
+              setOpen(!open)
+              sessionStorage.setItem("route", "/dashboard")
+            }}
+            className={` rounded-md hover:bg-green-50 bg-slate-50 hover:text-green-500 cursor-pointer transition-colors duration-300 ease-in-out p-2 font-semibold  `}
+          >
+            Dashboard
+          </Link>
+        ) : (
           <Link
           href={`/dashboard/profile/${userData?.id}`}
           onClick={() => {
@@ -68,17 +81,6 @@ export const ProfileModal = ({ id, isPathInItems }) => {
           Profile
         </Link>
           
-        ) : (
-          <Link
-            href={`/dashboard`}
-            onClick={() => {
-              setOpen(!open)
-              sessionStorage.setItem("route", "/dashboard")
-            }}
-            className={` rounded-md hover:bg-green-50 bg-slate-50 hover:text-green-500 cursor-pointer transition-colors duration-300 ease-in-out p-2 font-semibold  `}
-          >
-            Dashboard
-          </Link>
         )}
 
         <div

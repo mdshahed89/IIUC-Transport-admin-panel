@@ -9,6 +9,10 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { UserTable } from "@/components/Table";
 import Image from "next/image";
+import { TiUserAdd } from "react-icons/ti";
+import { HiOutlineUserAdd } from "react-icons/hi";
+
+
 
 const Page = () => {
   const { userData, setUserData } = useData();
@@ -119,8 +123,9 @@ const GetAllUsers = ({ userData }) => {
         <h3 className="text-[2rem] font-medium">All Users</h3>
         <Link
           href={`/dashboard/profile/${userData?.id}/add-user`}
-          className=" bg-green-500 px-7 py-2 rounded-md w-fit text-white font-medium active:scale-95 cursor-pointer transition-all duration-300 ease-in-out mt-4 "
+          className=" bg-green-500 px-7 py-2 flex items-center gap-2 rounded-md w-fit text-white font-medium active:scale-95 cursor-pointer transition-all duration-300 ease-in-out mt-4 "
         >
+          <HiOutlineUserAdd className=" text-[1.2rem] " />
           Add User
         </Link>
       </div>

@@ -19,6 +19,9 @@ import { FaRegUser } from "react-icons/fa";
 import { jwtDecode } from "jwt-decode";
 import { VscFeedback } from "react-icons/vsc";
 import { ProfileModal } from "@/components/Modals";
+import { AiOutlineBars } from "react-icons/ai";
+import { HiMiniBars2 } from "react-icons/hi2";
+import { HiMiniBars3 } from "react-icons/hi2";
 
 // export const metadata = {
 //   title: "Konsolenttorget Register",
@@ -27,7 +30,7 @@ import { ProfileModal } from "@/components/Modals";
 
 export default function DashboardLayout({ children, params }) {
   const { userData, setUserData } = useData();
-  const [sideBarOpen, setSideBarOpen] = useState(true);
+  const [sideBarOpen, setSideBarOpen] = useState(false);
   const currentPath = usePathname();
   const { id } = React.use(params);
   const [isLoading, setIsLoading] = useState(true);
@@ -60,27 +63,27 @@ export default function DashboardLayout({ children, params }) {
     };
   }, []);
 
-  // useEffect(() => {
-  //   const checkAuth = async () => {
-  //     try {
-  //       const decodeToken = jwtDecode(userData.token);
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const decodeToken = jwtDecode(userData.token);
 
-  //       if (decodeToken?.role !== "Super Admin") {
-  //         router.push("/");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error decoding token:", error);
-  //       setUserData({})
-  //       router.push("/");
-  //     }
-  //   };
+        if (decodeToken?.role !== "Super Admin") {
+          router.push("/");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        setUserData({});
+        router.push("/");
+      }
+    };
 
-  //   if (userData?.token) {
-  //     checkAuth();
-  //   } else {
-  //     router.push("/");
-  //   }
-  // }, [router, userData]);
+    if (userData?.token) {
+      checkAuth();
+    } else {
+      router.push("/");
+    }
+  }, [router, userData]);
 
   const items = [
     {
@@ -130,8 +133,9 @@ export default function DashboardLayout({ children, params }) {
     },
   ];
 
-
-  const isPathInItems = items.some(item => currentPath.includes(item.pathName));
+  const isPathInItems = items.some((item) =>
+    currentPath.includes(item.pathName)
+  );
 
   if (isLoading) {
     return <LoadingPage />;
@@ -144,18 +148,14 @@ export default function DashboardLayout({ children, params }) {
           <div
             ref={optionRef}
             className={` ${
-              sideBarOpen
-                ? "inboxSideBarOpen w-[20rem] "
-                : "inboxSideBarClose w-[3.5rem] "
-            } bg-[#2C2C2C] flex-shrink-0 z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-5 overflow-y-auto `}
+              sideBarOpen ? (window.innerWidth < 768 && "inboxSideBarOpen") : (window.innerWidth < 768 && "inboxSideBarClose")
+            } bg-[#2C2C2C] w-[20rem] flex-shrink-0 z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-5 overflow-y-auto `}
           >
             <div>
               <div className=" h-[5rem] ">
-                {sideBarOpen && (
-                  <h3 className=" text-[#fff] text-[2rem] font-semibold text-center   ">
-                    IIUC TRANSPORT
-                  </h3>
-                )}
+                <h3 className=" text-[#fff] text-[2rem] font-semibold text-center   ">
+                  IIUC TRANSPORT
+                </h3>
               </div>
               <div className={` flex flex-col gap-1 mt-10 `}>
                 {items.map((item, idx) => (
@@ -171,9 +171,7 @@ export default function DashboardLayout({ children, params }) {
                           currentPath === item.pathName
                             ? "bg-green-50  text-green-500 "
                             : "text-[#fff]"
-                        } group flex items-center gap-4 text-[1.1rem] hover:bg-green-50 rounded-md hover:text-green-500 px-3 ${
-                          sideBarOpen ? "" : "justify-center"
-                        }  py-2   transition-all duration-300 ease-in-out font-medium  `}
+                        } group flex items-center gap-4 text-[1.1rem] hover:bg-green-50 rounded-md hover:text-green-500 px-3  py-2   transition-all duration-300 ease-in-out font-medium  `}
                       >
                         <div
                           className={`${
@@ -184,11 +182,7 @@ export default function DashboardLayout({ children, params }) {
                         >
                           {item.icon}
                         </div>
-                        <span
-                          className={` ${
-                            sideBarOpen ? "" : "hidden"
-                          }  group-hover:text-green-500`}
-                        >
+                        <span className={` group-hover:text-green-500`}>
                           {item.title}
                         </span>
                       </div>
@@ -197,26 +191,26 @@ export default function DashboardLayout({ children, params }) {
                 ))}
               </div>
             </div>
-            <div
-              className={` flex ${
-                sideBarOpen ? "justify-end" : "justify-center"
-              } `}
-            >
+            <div className={` md:hidden flex justify-end pr-2 `}>
               <div
-                onClick={() => setSideBarOpen(!sideBarOpen)}
+                onClick={() => setSideBarOpen(false)}
                 className={` w-fit p-2 bg-white cursor-pointer rounded-full `}
               >
                 <LuPanelLeftClose
-                  className={` ${
-                    sideBarOpen ? "" : "rotate-180"
-                  } text-[1.5rem] text-[#00712D] `}
+                  className={` text-[1.5rem] text-[#00712D] `}
                 />
               </div>
             </div>
           </div>
 
-          <div className=" flex-1 max-w-[100vw] md:pl-0 pl-[3.4rem] ">
+          <div className=" flex-1 max-w-[100vw] ">
             <div className=" flex items-center justify-between w-full px-5 h-[4.5rem] bg-[#2C2C2C]  ">
+              <div
+                onClick={() => setSideBarOpen(true)}
+                className=" md:hidden block "
+              >
+                <HiMiniBars3 className=" text-[#fff] text-[1.4rem] " />
+              </div>
               <h3 className=" text-[2rem] font-medium text-white ">
                 Dashboard
               </h3>
