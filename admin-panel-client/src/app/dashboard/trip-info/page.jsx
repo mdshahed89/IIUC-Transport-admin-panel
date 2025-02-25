@@ -4,6 +4,9 @@ import { TripTable } from "@/components/Table";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 const BusTripManagement = () => {
   const [tripDetails, setTripDetails] = useState({
@@ -126,7 +129,62 @@ const BusTripManagement = () => {
     }
   };
 
-  console.log(tripReportDate);
+  // console.log(tripReportDate);
+
+  const [downloadLoading, setDownloadLoading] = useState(false);
+
+  const downloadPDF = () => {
+    setDownloadLoading(true);
+  
+    try {
+      const doc = new jsPDF();
+      doc.setFont("helvetica", "normal"); // Fix for setFontStyle issue
+      doc.text("Bus Trip Details", 14, 15);
+  
+      autoTable(doc, {
+        startY: 25,
+        head: [
+          [
+            "Bus No",
+            "Start Point",
+            "Driver Name",
+            "Helper Name",
+            "Sub Driver Name",
+            "Sub Helper Name",
+            "No. of Students",
+            "Trip Date",
+          ],
+        ],
+        body: trips.map((dt) => [
+          dt?.busNo || "-",
+          dt?.startPoint || "-",
+          dt?.driverName || "-",
+          dt?.helperName || "-",
+          dt?.subDriverName || "-",
+          dt?.subHelperName || "-",
+          dt?.noOfStudents || "-",
+          dt?.tripDate || "-",
+        ]),
+        theme: "grid",
+        styles: {
+          font: "helvetica",
+          fontSize: 10,
+          halign: "center",
+        },
+        headStyles: {
+          fillColor: "#666666", // Set the background color for the header row
+          textColor: [255, 255, 255], // Set text color to white
+           // Horizontally center the text
+        },
+      });
+  
+      doc.save("Bus_Trip_Details.pdf");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
 
   return (
     <motion.div
@@ -221,9 +279,11 @@ const BusTripManagement = () => {
             }
             {
               trips && trips.length > 0 && <div className="flex justify-end">
-              <button className="mt-4 bg-green-500 text-white px-6 py-2 rounded-lg text-sm sm:text-base active:scale-95 transition-all duration-300 ease-out">
-                Download PDF
-              </button>
+              <div onClick={downloadPDF} className=" cursor-pointer mt-4 bg-green-500 text-white px-6 py-2 rounded-lg text-sm sm:text-base active:scale-95 transition-all duration-300 ease-out">
+                {
+                  downloadLoading ? "Loading..." : "Download"
+                }
+              </div>
             </div>
             }
           </div>

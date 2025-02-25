@@ -239,14 +239,14 @@ export function TripTable({ data }) {
       setIsDragging(true);
       setStartX(e.pageX - tableContainer.offsetLeft);
       setScrollLeft(tableContainer.scrollLeft);
-      tableContainer.style.cursor = "grabbing"; // Change cursor
-      e.preventDefault(); // Prevent text selection
+      tableContainer.style.cursor = "grabbing"; 
+      e.preventDefault(); 
     };
 
     const handleMouseMove = (e) => {
       if (!isDragging) return;
       const x = e.pageX - tableContainer.offsetLeft;
-      const walk = (x - startX) * 2; // Adjust speed
+      const walk = (x - startX) * 2; 
       tableContainer.scrollLeft = scrollLeft - walk;
     };
 
@@ -270,12 +270,12 @@ export function TripTable({ data }) {
 
   return (
     <div ref={tableRef}
-      className="overflow-x-auto cursor-grab select-none" // Disable text selection
+      className="overflow-x-auto cursor-grab select-none" 
       style={{
         whiteSpace: "nowrap", 
-        userSelect: "none", // Prevents text selection
-        WebkitUserSelect: "none", // Prevents selection in Safari
-        MsUserSelect: "none", // Prevents selection in IE
+        userSelect: "none", 
+        WebkitUserSelect: "none",
+        MsUserSelect: "none", 
       }}>
       {data && Array.isArray(data) && data.length > 0 ? (
         <table className=" w-full mx-auto border shadow-md border-gray-100 my-6">
