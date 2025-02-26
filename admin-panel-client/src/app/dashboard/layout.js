@@ -148,7 +148,9 @@ export default function DashboardLayout({ children, params }) {
           <div
             ref={optionRef}
             className={` ${
-              sideBarOpen ? (window.innerWidth < 768 && "inboxSideBarOpen") : (window.innerWidth < 768 && "inboxSideBarClose")
+              sideBarOpen
+                ? window.innerWidth < 768 && "inboxSideBarOpen"
+                : window.innerWidth < 768 && "inboxSideBarClose"
             } bg-[#2C2C2C] w-[20rem] flex-shrink-0 z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-5 overflow-y-auto `}
           >
             <div>

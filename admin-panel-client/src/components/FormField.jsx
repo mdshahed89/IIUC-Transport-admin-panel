@@ -253,13 +253,11 @@ export const FormSelectFieldSearch = ({
 }) => {
   const [allOpen, setAllOpen] = useState(false);
   const [search, setSearch] = useState(defaultValue);
-  const [error, setError] = useState(false);
 
   const allRef = useRef(null);
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
-    setError(false); // Reset error when typing
   };
 
   // **Filter options based on search input**
@@ -286,19 +284,9 @@ export const FormSelectFieldSearch = ({
     };
   }, []);
 
-  // **Validate input on blur**
-  const validateInput = () => {
-    if (!selectOption.includes(search)) {
-      setError(true);
-    } else {
-      setError(false);
-    }
-  };
-
   // **Handle option selection**
   const handleOptionClick = (option) => {
     setSearch(option);
-    setError(false); // Ensure error is cleared when selecting a valid option
     setAllOpen(false); // Close dropdown
     getData(option); // Call getData with the selected option
   };
@@ -312,20 +300,12 @@ export const FormSelectFieldSearch = ({
       <div className="relative">
         <input
           type="text"
-          className={`w-full px-4 py-2 border ${
-            error ? "border-red-500" : "border-gray-300"
-          } rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 ${
-            error ? "focus:ring-red-500" : "focus:ring-green-500"
-          }`}
+          className={`w-full px-4 py-2 border "border-gray-300"
+        rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 
+             "focus:ring-green-500"
+          `}
           onClick={() => setAllOpen(true)}
           onChange={handleSearch}
-          onBlur={validateInput} // **Validation on Blur**
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              validateInput();
-              setAllOpen(false);
-            }
-          }}
           placeholder={placeholder}
           value={search}
           name={name}
@@ -336,13 +316,10 @@ export const FormSelectFieldSearch = ({
             className="absolute top-1/2 -translate-y-1/2 right-2 cursor-pointer text-gray-500"
             onClick={() => {
               setSearch("");
-              setError(false); // Remove error when clearing input
             }}
           />
         )}
       </div>
-
-      {error && <p className="text-red-500 text-sm mt-1">Invalid selection!</p>}
 
       {allOpen && (
         <ul className="absolute w-full bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10 max-h-60 overflow-y-auto">

@@ -27,9 +27,9 @@ export const create = async ({ endpoint, data }) => {
 export const getData = async ({ endpoint }) => {
   try {
     const res = await fetch(`${API_LINK}${endpoint}`);
-    console.log("res", `End: ${API_LINK}${endpoint}`, res);
+    // console.log("res", `End: ${API_LINK}${endpoint}`, res);
     const data = await res.json();
-    console.log(`End: ${API_LINK}${endpoint}`, data);
+    // console.log(`End: ${API_LINK}${endpoint}`, data);
     return data;
   } catch (e) {
     console.log(`End: ${API_LINK}${endpoint}`, e?.message);
@@ -96,6 +96,17 @@ export const deleteDataAndRevalidatePath = async ({
   }
 };
 
+export const getDashboard = async () => {
+  return getData({ endpoint: "/dashboard" });
+};
+
+export const fetchNotification = async () => {
+  return getData({ endpoint: "/notification" });
+};
+
+export const fetchFeedback = async () => {
+  return getData({ endpoint: "/feedback" });
+};
 export const getBusSchedules = async () => {
   return getData({ endpoint: "/bus-schedules" });
 };
@@ -108,7 +119,7 @@ export const getBusInfo = async () => {
   return getData({ endpoint: "/bus-info" });
 };
 export const getBusInfoById = async (id) => {
-  return getData({ endpoint: `/bus-info${id}` });
+  return getData({ endpoint: `/bus-info/${id}` });
 };
 
 export const getAssignBus = async () => {

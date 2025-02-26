@@ -12,7 +12,7 @@ export default function NameAndPhoneSelect({
   const [selectName, setSelectName] = useState(defaultName || "");
   const [phoneNumber, setPhoneNumber] = useState(defaultPhone || "");
 
-  console.log(data);
+  console.log(label, "phone", phoneNumber, "defol", defaultPhone);
   // Get list of names from data
   const names = data?.map((driver) => driver?.driverName || driver?.name);
 
@@ -47,7 +47,7 @@ export default function NameAndPhoneSelect({
       <input
         type="text"
         name={`${name}Phone`}
-        value={phoneNumber} // Updated phone number
+        value={phoneNumber || defaultPhone} // Updated phone number
         readOnly
         className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
       />

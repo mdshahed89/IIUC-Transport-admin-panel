@@ -115,7 +115,7 @@ const Content = ({ buses }) => {
                   </div> */}
 
                   <Link
-                    href={`/dashboard/bus-details?edit=${id}`}
+                    href={`/dashboard/bus-details?edit=${busNo}`}
                     className="bg-slate-100 p-2 rounded-full shadow-inner cursor-pointer"
                   >
                     <CiEdit />

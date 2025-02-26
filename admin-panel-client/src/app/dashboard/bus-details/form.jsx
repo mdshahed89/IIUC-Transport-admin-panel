@@ -13,7 +13,6 @@ import { IoArrowBackSharp } from "react-icons/io5";
 import Link from "next/link";
 
 const BusInfoForm = async ({ edit }) => {
-  const editId = Number(edit);
   let editAbleBus;
 
   const driverInfo = await getDriverInfo();
@@ -21,11 +20,12 @@ const BusInfoForm = async ({ edit }) => {
 
   if (edit) {
     // Get editable data
-    editAbleBus = await getBusInfoById(Number(editId));
+    editAbleBus = await getBusInfoById(Number(edit));
   }
 
   // Destucture editable data
   const {
+    id: editId,
     busNo,
     vehicleId,
     driverName,
@@ -46,7 +46,7 @@ const BusInfoForm = async ({ edit }) => {
     };
 
     if (edit) {
-      const edited = await editData({ endpoint: `/bus-info${editId}`, data });
+      const edited = await editData({ endpoint: `/bus-info/${editId}`, data });
       if (!edited?.error) {
         redirect("/dashboard/bus-details");
       }
@@ -86,8 +86,20 @@ const BusInfoForm = async ({ edit }) => {
           required
         />
 
-        <NameAndPhoneSelect name="driver" label="Driver" data={driverInfo} />
-        <NameAndPhoneSelect name="helper" label="Helper" data={helperInfo} />
+        <NameAndPhoneSelect
+          name="driver"
+          label="Driver"
+          data={driverInfo}
+          defaultName={driverName}
+          defaultPhone={driverPhone}
+        />
+        <NameAndPhoneSelect
+          name="helper"
+          label="Helper"
+          data={helperInfo}
+          defaultName={helperName}
+          defaultPhone={helperPhone}
+        />
 
         <InputField
           label="Capacity"
