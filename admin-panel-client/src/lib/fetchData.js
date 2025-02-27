@@ -115,15 +115,15 @@ export const getBusScheduleById = async (id) => {
   return getData({ endpoint: `/bus-schedules/${id}` });
 };
 
-export const getBusInfo = async () => {
-  return getData({ endpoint: "/bus-info" });
+export const getBusInfo = async ({ page }) => {
+  return getData({ endpoint: `/bus-info?page=${page}` });
 };
 export const getBusInfoById = async (id) => {
   return getData({ endpoint: `/bus-info/${id}` });
 };
 
-export const getAssignBus = async () => {
-  return getData({ endpoint: "/assign-bus" });
+export const getAssignBus = async ({ page }) => {
+  return getData({ endpoint: `/assign-bus?paget=${page}` });
 };
 
 export const getAssignBusById = async (id) => {

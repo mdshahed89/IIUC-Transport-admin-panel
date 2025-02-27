@@ -2,14 +2,15 @@ import { getBusSchedules } from "@/lib/fetchData";
 import React from "react";
 import Content from "./Content";
 import ScheduleForm from "./form";
+import Pagination from "@/components/Pageination";
 
 const BusInformation = async ({ searchParams }) => {
-  const { edit, add } = await searchParams;
+  const { edit, add, page = 1 } = await searchParams;
 
   let schedules;
   if (!edit && !add) {
     const busSchedules = await getBusSchedules();
-    schedules = busSchedules?.schedules || [];
+    schedules = busSchedules || {};
   }
 
   return (
@@ -21,7 +22,14 @@ const BusInformation = async ({ searchParams }) => {
           <h2 className="text-3xl font-semibold text-center mb-6">
             Bus Information
           </h2>
-          <Content schedules={schedules} />
+          <Content schedules={schedules?.schedules} />
+
+          {schedules?.totalPages > 1 && (
+            <Pagination
+              currentPage={Number(page)}
+              totalPages={schedules?.totalPages}
+            />
+          )}
         </div>
       )}
     </>

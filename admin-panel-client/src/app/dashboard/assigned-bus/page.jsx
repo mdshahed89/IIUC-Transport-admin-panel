@@ -3,11 +3,11 @@ import Content from "./Content";
 import AssignBusForm from "./form";
 
 const AssignedBuses = async ({ searchParams }) => {
-  const { edit, add } = await searchParams;
+  const { edit, add, page = 1 } = await searchParams;
 
-  let busData;
+  let assignBus;
   if (!edit && !add) {
-    busData = (await getAssignBus()) || [];
+    assignBus = (await getAssignBus({ page })) || [];
   }
 
   return (
@@ -20,7 +20,13 @@ const AssignedBuses = async ({ searchParams }) => {
             <h2 className="text-3xl font-semibold text-center mb-6">
               Assigned Buses
             </h2>
-            <Content busData={busData} />
+            <Content assignBus={assignBus} />
+            {assignBus?.totalPages > 1 && (
+              <Pagination
+                currentPage={Number(page)}
+                totalPages={assignBus?.totalPages}
+              />
+            )}
           </div>
         </div>
       )}

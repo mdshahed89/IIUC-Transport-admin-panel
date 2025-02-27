@@ -1,15 +1,16 @@
 import { getBusInfo } from "@/lib/fetchData";
 import Content from "./Content";
 import BusInfoForm from "./form";
+import Pagination from "@/components/Pageination";
 
 const BusInformation = async ({ searchParams }) => {
-  const { edit, add } = await searchParams;
+  const { edit, add, page = 1 } = await searchParams;
 
-  let buses;
+  let busInfo;
 
   if (!edit && !add) {
-    const busData = await getBusInfo();
-    buses = busData?.buses || [];
+    const busData = await getBusInfo({ page });
+    busInfo = busData || {};
   }
 
   return (
@@ -24,7 +25,14 @@ const BusInformation = async ({ searchParams }) => {
             Bus Information
           </h2>
 
-          <Content buses={buses} />
+          <Content buses={busInfo?.buses || []} />
+
+          {busInfo?.totalPages > 1 && (
+            <Pagination
+              currentPage={Number(page)}
+              totalPages={busInfo?.totalPages}
+            />
+          )}
         </div>
       )}
     </>

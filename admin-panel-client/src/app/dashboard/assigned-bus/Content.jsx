@@ -9,6 +9,8 @@ import { IoPersonAddSharp } from "react-icons/io5";
 import Link from "next/link";
 import React, { useState } from "react";
 import { convertTo12HourFormat } from "@/utils/timeFormat";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+import Pagination from "@/components/Pageination";
 
 const tableHeaders = [
   "Bus Number",
@@ -23,7 +25,7 @@ const tableHeaders = [
 
 const userOption = ["All Types", "Students", "Teachers", "Staff"];
 
-const Content = ({ busData = [] }) => {
+const Content = ({ assignBus = [] }) => {
   const [busNumber, setBusNumber] = useState("");
   const [busType, setBusType] = useState("All Types");
 
@@ -71,7 +73,7 @@ const Content = ({ busData = [] }) => {
         </Link>
       </div>
       <Table tableHeaders={tableHeaders}>
-        {busData?.buses
+        {assignBus?.buses
           ?.filter(filterByBusNumber)
           .filter(filterByBusType)
           .map((bus) => {
