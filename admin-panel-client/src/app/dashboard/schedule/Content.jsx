@@ -15,6 +15,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { IoPersonAddSharp } from "react-icons/io5";
 import { convertTo12HourFormat } from "@/utils/timeFormat";
+import ScheduleModal from "./ScheduleModal";
 
 // Table header
 const tableHeaders = [
@@ -39,7 +40,7 @@ const scheduleOptions = [
   "Special Schedule",
 ];
 
-const Content = ({ schedules }) => {
+const Content = ({ schedules, scheduleTypes }) => {
   const [filter, setFilter] = useState("");
   const [scheduleType, setscheduleType] = useState("All");
   const [status, setStatus] = useState();
@@ -111,9 +112,7 @@ const Content = ({ schedules }) => {
         <SelectField selectOption={scheduleOptions} getValue={handleSchedule} />
 
         {/* Status filter */}
-        <Button bg="red" onClick={handleStatus}>
-          Active/Inactive Schedule
-        </Button>
+        <ScheduleModal scheduleTypes={scheduleTypes} />
 
         {/* Clear filter */}
         <Button onClick={clearFilter}>Clear Filter</Button>

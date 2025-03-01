@@ -144,7 +144,7 @@ export const fetchScheduleType = async () => {
   return getData({ endpoint: "/dashboard/schedule-types" });
 };
 
-export const toggleScheduleType = async ({ endpoint, data }) => {
+export const toggleScheduleType = async ({ endpoint, data, pathName }) => {
   try {
     const response = await fetch(
       `${API_LINK}/dashboard/schedule-types/${endpoint}/toggle`,
@@ -154,11 +154,11 @@ export const toggleScheduleType = async ({ endpoint, data }) => {
         body: JSON.stringify(data),
       }
     );
-
-    console.log("workd");
-    console.log(response);
+    console.log(response.status);
     if (response.status === 200) {
-      revalidatePath("/dashboard");
+      console.log("workd");
+      console.log(pathName);
+      revalidatePath(pathName);
     }
   } catch (e) {
     console.log(e);

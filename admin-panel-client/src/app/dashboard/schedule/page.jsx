@@ -1,4 +1,4 @@
-import { getBusSchedules } from "@/lib/fetchData";
+import { fetchScheduleType, getBusSchedules } from "@/lib/fetchData";
 import React from "react";
 import Content from "./Content";
 import ScheduleForm from "./form";
@@ -8,9 +8,12 @@ const BusInformation = async ({ searchParams }) => {
   const { edit, add, page = 1 } = await searchParams;
 
   let schedules;
+  let scheduleTypes;
   if (!edit && !add) {
     const busSchedules = await getBusSchedules();
     schedules = busSchedules || {};
+
+    scheduleTypes = (await fetchScheduleType()) || [];
   }
 
   return (
@@ -19,10 +22,11 @@ const BusInformation = async ({ searchParams }) => {
         <ScheduleForm edit={edit} />
       ) : (
         <div className="p-4 md:p-8">
-          <h2 className="text-3xl font-semibold text-center mb-6">
-            Bus Information
-          </h2>
-          <Content schedules={schedules?.schedules} />
+          <h2 className="text-3xl font-semibold text-center mb-6">Schedule</h2>
+          <Content
+            schedules={schedules?.schedules}
+            scheduleTypes={scheduleTypes}
+          />
 
           {schedules?.totalPages > 1 && (
             <Pagination

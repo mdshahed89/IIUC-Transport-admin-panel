@@ -3,13 +3,16 @@ import React from "react";
 import { Table, Td } from "./Table";
 import Button from "./Button";
 import { toggleScheduleType } from "@/lib/fetchData";
+import { usePathname } from "next/navigation";
 
 const ScheduleType = ({ scheduleTypes }) => {
-  console.log("clinet 1:", scheduleTypes);
+  const pathName = usePathname();
+
   const handleToggleSchedule = (scheduleType, isActive) => {
     toggleScheduleType({
       endpoint: scheduleType,
       data: { isActive: !isActive },
+      pathName,
     });
   };
 
