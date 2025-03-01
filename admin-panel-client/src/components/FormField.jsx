@@ -252,7 +252,7 @@ export const FormSelectFieldSearch = ({
   getData = () => {},
 }) => {
   const [allOpen, setAllOpen] = useState(false);
-  const [search, setSearch] = useState(defaultValue);
+  const [search, setSearch] = useState(defaultValue || "");
 
   const allRef = useRef(null);
 

@@ -1,12 +1,13 @@
 import { getAssignBus } from "@/lib/fetchData";
 import Content from "./Content";
 import AssignBusForm from "./form";
+import Error from "@/components/ReloadButton";
 
 const AssignedBuses = async ({ searchParams }) => {
   const { edit, add, page = 1 } = await searchParams;
 
   let assignBus;
-  if (!edit && !add) {
+  if (!edit || !add) {
     assignBus = (await getAssignBus({ page })) || [];
   }
 

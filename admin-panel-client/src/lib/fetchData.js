@@ -115,8 +115,10 @@ export const getBusScheduleById = async (id) => {
   return getData({ endpoint: `/bus-schedules/${id}` });
 };
 
-export const getBusInfo = async ({ page }) => {
-  return getData({ endpoint: `/bus-info?page=${page}` });
+export const getBusInfo = async ({ page } = {}) => {
+  const endpoint = page ? `/bus-info?page=${page}` : "/bus-info";
+
+  return getData({ endpoint: endpoint });
 };
 export const getBusInfoById = async (id) => {
   return getData({ endpoint: `/bus-info/${id}` });
@@ -136,4 +138,29 @@ export const getDriverInfo = async () => {
 
 export const getHelperInfo = async () => {
   return getData({ endpoint: `/helper-info` });
+};
+
+export const fetchScheduleType = async () => {
+  return getData({ endpoint: "/dashboard/schedule-types" });
+};
+
+export const toggleScheduleType = async ({ endpoint, data }) => {
+  try {
+    const response = await fetch(
+      `${API_LINK}/dashboard/schedule-types/${endpoint}/toggle`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }
+    );
+
+    console.log("workd");
+    console.log(response);
+    if (response.status === 200) {
+      revalidatePath("/dashboard");
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };

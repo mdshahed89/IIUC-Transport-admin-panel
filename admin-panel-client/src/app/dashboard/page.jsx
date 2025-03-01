@@ -3,6 +3,7 @@ import { Table, Td } from "@/components/Table";
 import {
   fetchFeedback,
   fetchNotification,
+  fetchScheduleType,
   getBusSchedules,
   getDashboard,
 } from "@/lib/fetchData";
@@ -12,32 +13,40 @@ import React from "react";
 import { FaCommentAlt, FaUser, FaUserCog } from "react-icons/fa";
 import { IoIosNotifications, IoMdBus } from "react-icons/io";
 import { getRecentEntries } from "@/lib/utils";
+import ScheduleType from "@/components/ScheduleType";
 
 const page = async () => {
   const dashboardData = await getDashboard();
-  const { busCount, driverCount, helperCount } = dashboardData;
+  const {
+    TotalbusCount,
+    activeBusCount,
+    inactiveBusCount,
+    driverCount,
+    helperCount,
+    totalStudentsPreviousDay,
+    totalStudentsToday,
+  } = dashboardData;
   const { notifications } = (await fetchNotification()) || [];
   const { data } = (await fetchFeedback()) || [];
   const feedbacks = getRecentEntries(data);
-  const busSchedules = (await getBusSchedules()) || [];
-  const busSchedulesTypes = busSchedules?.schedules?.map((busSchedule) => ({
-    id: busSchedule.id,
-    scheduleType: busSchedule.scheduleType,
-    isActive: busSchedule.isActive,
-  }));
+  const scheduleType = (await fetchScheduleType()) || [];
+  console.log(scheduleType);
 
   return (
     <div className="p-4  md:p-10 bg-gray-100 space-y-8">
       <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
 
       <div className="flex flex-wrap gap-4">
-        <Card title="Active Buses" content={busCount} />
-        <Card title="Inactive Buses" />
+        <Card title="Total Buses" content={TotalbusCount} />
+        <Card title="Active Buses" content={activeBusCount} />
+        <Card title="Inactive Buses" content={inactiveBusCount} />
         <Card title="Drivers" content={driverCount} />
         <Card title="helpers" content={helperCount} />
-        <Card title="Students Travaling Today" />
-        <Card title="Comeing to University" />
-        <Card title="Leaving to University" />
+        <Card title="Students Travaling Today" content={totalStudentsToday} />
+        <Card
+          title="Students Travaling Yesterday"
+          content={totalStudentsPreviousDay}
+        />
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -73,25 +82,14 @@ const page = async () => {
         <h3 className="text-center text-2xl mb-4 font-medium">
           Schedule Status
         </h3>
-        <Table tableHeaders={["Schedule Type", "Status"]}>
-          {busSchedulesTypes?.map((busSchedulesType) => {
-            const { id, scheduleType, isActive } = busSchedulesType;
-
-            return (
-              <tr key={id}>
-                <Td>{scheduleType}</Td>
-                <Td>{isActive ? "Active" : "Inactive"}</Td>
-              </tr>
-            );
-          })}
-        </Table>
+        <ScheduleType scheduleTypes={scheduleType} />
       </CardWrapper>
 
       <div>
         <h3 className="text-xl font-medium mb-4">Quick Actions</h3>
         <div className="flex justify-center gap-2">
           <Link
-            href="/deshboard/dashboard/assigned-bus?add=true"
+            href="/dashboard/assigned-bus?add=true"
             className="py-1 px-2 flex items-center gap-1 bg-blue-600 text-white rounded max-w-min whitespace-nowrap"
           >
             <IoMdBus size={20} /> Assign Bus
@@ -109,7 +107,7 @@ const page = async () => {
             <FaUser size={20} /> Manage Driver
           </Link>
           <Link
-            href="/helper-info/add-helper"
+            href="/dashboard/helper-info/add-helper"
             className="py-1 px-2 flex items-center gap-1 bg-yellow-600 text-white rounded max-w-min whitespace-nowrap"
           >
             <FaUserCog size={20} /> Manage Helper
@@ -126,7 +124,7 @@ const Card = ({ title, content }) => {
   return (
     <div className="bg-white py-4 px-6 rounded-lg text-center shadow-md flex-grow">
       <h2 className="text-xl font-semibold">{title}</h2>
-      <p className="text-3xl font-bold mt-2">{content}</p>
+      <p className="text-lg font-semibold mt-2">{content}</p>
     </div>
   );
 };

@@ -13,19 +13,20 @@ import { IoArrowBackSharp } from "react-icons/io5";
 import Link from "next/link";
 
 const BusInfoForm = async ({ edit }) => {
-  let editAbleBus;
+  const editId = Number(edit);
 
   const driverInfo = await getDriverInfo();
   const helperInfo = await getHelperInfo();
 
+  let editAbleBus;
   if (edit) {
     // Get editable data
-    editAbleBus = await getBusInfoById(Number(edit));
+    editAbleBus = await getBusInfoById(editId);
   }
 
   // Destucture editable data
   const {
-    id: editId,
+    id,
     busNo,
     vehicleId,
     driverName,
