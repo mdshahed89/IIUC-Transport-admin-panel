@@ -16,8 +16,8 @@ const AssignedBuses = async ({ searchParams }) => {
       {edit || add ? (
         <AssignBusForm edit={edit} />
       ) : (
-        <div className="p-8 flex-1 overflow-auto">
-          <div className="container mx-auto p-6">
+        <div className=" flex-1 overflow-auto">
+          <div className="container mx-auto ">
             <h2 className="text-3xl font-semibold text-center mb-6">
               Assigned Buses
             </h2>

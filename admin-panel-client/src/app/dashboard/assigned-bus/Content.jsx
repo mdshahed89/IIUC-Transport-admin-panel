@@ -57,10 +57,10 @@ const Content = ({ assignBus = [] }) => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-wrap justify-between items-center mb-4">
         <InputField
           placeholder="Search by Bus Number and slot name"
-          type="number"
+          type="text"
           value={busNumber}
           onChange={handleBusNumebr}
         />

@@ -11,7 +11,7 @@ export const InputField = ({
   classes,
 }) => (
   <input
-    className={`border px-4 py-2 rounded w-1/3 ${classes}`}
+    className={`border px-4 py-2 rounded w-full md:w-1/3 ${classes}`}
     type={type}
     placeholder={placeholder}
     value={value}

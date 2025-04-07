@@ -87,7 +87,7 @@ const page = async () => {
 
       <div>
         <h3 className="text-xl font-medium mb-4">Quick Actions</h3>
-        <div className="flex justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <Link
             href="/dashboard/assigned-bus?add=true"
             className="py-1 px-2 flex items-center gap-1 bg-blue-600 text-white rounded max-w-min whitespace-nowrap"
