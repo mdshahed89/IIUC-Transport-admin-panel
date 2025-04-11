@@ -131,6 +131,16 @@ export default function DashboardLayout({ children, params }) {
       icon: <VscFeedback className=" text-[1.4rem] " />,
       pathName: `/dashboard/feedback`,
     },
+    {
+      title: "Pickup Points",
+      icon: <VscFeedback className=" text-[1.4rem] " />,
+      pathName: `/dashboard/pickup-points`,
+    },
+    {
+      title: "General Users",
+      icon: <VscFeedback className=" text-[1.4rem] " />,
+      pathName: `/dashboard/general-users`,
+    },
   ];
 
   const isPathInItems = items.some((item) =>

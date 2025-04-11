@@ -450,3 +450,115 @@ export function UserTable({ users, fetchUsers, token, adminId }) {
     </div>
   );
 }
+
+
+export function GeneralUsersTable({ generalUsers, fetchGeneralUsers }) {
+  const deleteGeneralUserHandler = async (id) => {
+    if (!id) {
+      toast.error("General user id is required");
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin/all-users/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (response.ok) {
+        toast.success("General user deleted successfully!");
+        fetchGeneralUsers();
+      } else {
+        toast.error(data.message || "Failed to delete general user!");
+      }
+    } catch (error) {
+      toast.error("Something went wrong! Please try again.");
+      console.error("Error submitting general user delete:", error);
+    }
+  };
+
+  return (
+    <div className="overflow-x-auto">
+      <table className=" w-full mx-auto border border-gray-100 my-6">
+        <thead>
+          <tr className="bg-[#666666] text-white">
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Name
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              ID
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Gsuit
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Department
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Pickup Point
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Gender
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              User Type
+            </th>
+            <th className="py-3 px-4 text-center whitespace-nowrap border-b">
+              Action
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {generalUsers.map((user, idx) => (
+            <tr
+              key={idx}
+              className="hover:bg-gray-50 transition duration-300 border-b"
+            >
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.userName}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.userID}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.userGsuit}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.Department}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.pickupPoint}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.gender}
+              </td>
+              <td className="py-4 px-2 whitespace-nowrap text-center">
+                {user?.userType}
+              </td>
+
+              <td className="px-2 py-2 text-center h-full">
+                <div className="h-full flex items-center justify-center gap-2 text-[1.4rem]  ">
+                  <div
+                    onClick={() => deleteGeneralUserHandler(user?.id)}
+                    className="bg-red-50 p-2 text-red-500 rounded-full shadow-inner cursor-pointer"
+                  >
+                    <MdDeleteOutline />
+                  </div>
+                  <Link
+                    href={`/dashboard/general-users/edit-general-user/${
+                      user?.id || "0"
+                    }`}
+                    className="bg-slate-100 p-2 rounded-full shadow-inner cursor-pointer"
+                  >
+                    <CiEdit />
+                  </Link>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
