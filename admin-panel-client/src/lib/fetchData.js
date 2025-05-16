@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 // const API_LINK = "https://iiuc-transport-system.onrender.com/api/admin";
-const API_LINK = "http://147.93.107.88:5000/api/admin";
+// const API_LINK = "http://147.93.107.88:5000/api/admin";
+const API_LINK = "https://api.salmanshahriar.wiki/api/admin";
 
 export const create = async ({ endpoint, data }) => {
   try {
@@ -63,14 +64,28 @@ export const deleteData = async (endpoint) => {
   }
 };
 
-export const scaheduleStatusToggle = async (id, isActive) => {
+export const scaheduleStatusToggle = async (id, isActive, adminId) => {
   try {
     const toggle = await editData({
       endpoint: `/bus-schedules/${id}/toggle`,
       data: { isActive: !isActive },
     });
     if (!toggle?.error) {
-      revalidatePath("/dashboard/schedule");
+      revalidatePath(`/dashboard/${adminId}/schedule`);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const assignBusStatusToggle = async (id, isActive, adminId) => {
+  try {
+    const toggle = await editData({
+      endpoint: `/assign-bus/${id}/toggle-active`,
+      data: { isActive: !isActive },
+    });
+    if (!toggle?.error) {
+      revalidatePath(`/dashboard/${adminId}/assign-bus`);
     }
   } catch (e) {
     console.log(e);
@@ -96,8 +111,8 @@ export const deleteDataAndRevalidatePath = async ({
   }
 };
 
-export const getDashboard = async () => {
-  return getData({ endpoint: "/dashboard" });
+export const getDashboard = async (adminId) => {
+  return getData({ endpoint: `/dashboard/${adminId}` });
 };
 
 export const fetchNotification = async () => {
@@ -140,14 +155,19 @@ export const getHelperInfo = async () => {
   return getData({ endpoint: `/helper-info` });
 };
 
-export const fetchScheduleType = async () => {
-  return getData({ endpoint: "/dashboard/schedule-types" });
+export const fetchScheduleType = async (adminId) => {
+  return getData({ endpoint: `/dashboard/${adminId}/schedule-types` });
 };
 
-export const toggleScheduleType = async ({ endpoint, data, pathName }) => {
+export const toggleScheduleType = async ({
+  endpoint,
+  data,
+  pathName,
+  adminId,
+}) => {
   try {
     const response = await fetch(
-      `${API_LINK}/dashboard/schedule-types/${endpoint}/toggle`,
+      `${API_LINK}/dashboard/${adminId}/schedule-types/${endpoint}/toggle`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },

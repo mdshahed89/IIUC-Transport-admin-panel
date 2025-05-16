@@ -22,7 +22,7 @@ export default function Home() {
   //     try {
   //       const decodeToken = jwtDecode(userData.token || "");
   //       if (decodeToken?.role === "Super Admin") {
-  //         router.push("/dashboard");
+  //         router.push(`/dashboard/${adminId}`);
   //       }
   //     } catch (error) {
   //       console.error("Error decoding token:", error);
@@ -58,7 +58,7 @@ export default function Home() {
           id: decodeToken?.id,
           role: decodeToken?.role
         });
-        router.push("/dashboard");
+        router.push(`/dashboard/${decodeToken?.id}`);
       } else {
         console.error("Login failed:", data.message || "Unknown error");
         toast.error("Failed to login, Please try again");

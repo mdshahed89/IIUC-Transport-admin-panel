@@ -9,7 +9,7 @@ import { FiLogOut } from "react-icons/fi";
 import { toast } from "react-toastify";
 
 
-export const ProfileModal = ({ id, isPathInItems }) => {
+export const ProfileModal = ({ id, isPathInItems, adminId }) => {
   const { userData, logout } = useData();
   const [open, setOpen] = useState(false);
   const dropDownRef = useRef(null);
@@ -38,9 +38,9 @@ export const ProfileModal = ({ id, isPathInItems }) => {
     logout();
     toast.success("Logout Successfully!!");
     router.push("/")
-  };
+  };  
 
-  // console.log("ddd", route);
+  // console.log(route + "helo" + pathname);
   
 
   return (
@@ -57,13 +57,13 @@ export const ProfileModal = ({ id, isPathInItems }) => {
             : "invisible translate-y-4"
         } absolute top-16 right-0 z-50 w-[15rem] p-[1rem] flex flex-col gap-1 rounded-xl bg-white shadow-[0px_5px_30px_rgba(0,0,0,0.15)]`}
       >
-        {route !== "/dashboard" ? 
+        {pathname === `/dashboard/${adminId}/profile/${userData?.id}` ? 
         (
           <Link
-            href={`/dashboard`}
+            href={`/dashboard/${adminId}`}
             onClick={() => {
               setOpen(!open)
-              sessionStorage.setItem("route", "/dashboard")
+              // sessionStorage.setItem("route", `/dashboard/${adminId}`)
             }}
             className={` rounded-md hover:bg-green-50 bg-slate-50 hover:text-green-500 cursor-pointer transition-colors duration-300 ease-in-out p-2 font-semibold  `}
           >
@@ -71,10 +71,10 @@ export const ProfileModal = ({ id, isPathInItems }) => {
           </Link>
         ) : (
           <Link
-          href={`/dashboard/profile/${userData?.id}`}
+          href={`/dashboard/${adminId}/profile/${userData?.id}`}
           onClick={() => {
             setOpen(!open)
-            sessionStorage.removeItem("route")
+            // sessionStorage.removeItem("route")
           }}
           className={` rounded-md hover:bg-green-50 bg-slate-50 hover:text-green-500 cursor-pointer transition-colors duration-300 ease-in-out p-2 font-semibold  `}
         >
