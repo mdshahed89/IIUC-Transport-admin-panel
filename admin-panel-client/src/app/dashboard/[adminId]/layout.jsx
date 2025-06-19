@@ -6,7 +6,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { LuPanelLeftClose } from "react-icons/lu";
 import { useData } from "../../context/Context";
 import { GoHome } from "react-icons/go";
-import { MdOutlineAssignment, MdWheelchairPickup } from "react-icons/md";
+import { MdFindInPage, MdOutlineAssignment, MdWheelchairPickup } from "react-icons/md";
 import { CgDetailsMore } from "react-icons/cg";
 import { MdOutlineSchedule } from "react-icons/md";
 import { BsInfoSquare } from "react-icons/bs";
@@ -17,7 +17,6 @@ import { VscFeedback } from "react-icons/vsc";
 import { ProfileModal } from "@/components/Modals";
 import { HiMiniBars3 } from "react-icons/hi2";
 import { PiUsersDuotone } from "react-icons/pi";
-
 
 // export const metadata = {
 //   title: "Konsolenttorget Register",
@@ -64,7 +63,10 @@ export default function DashboardLayout({ children, params }) {
       try {
         const decodeToken = jwtDecode(userData.token);
 
-        if (decodeToken?.role !== "Super Admin" && decodeToken?.role !== "Admin") {
+        if (
+          decodeToken?.role !== "Super Admin" &&
+          decodeToken?.role !== "Admin"
+        ) {
           router.push("/");
         }
       } catch (error) {
@@ -137,6 +139,11 @@ export default function DashboardLayout({ children, params }) {
       icon: <PiUsersDuotone className=" text-[1.4rem] " />,
       pathName: `/dashboard/${adminId}/general-users`,
     },
+    {
+      title: "Lost & Found",
+      icon: <MdFindInPage className=" text-[1.4rem] " />,
+      pathName: `/dashboard/${adminId}/lost-found`,
+    },
   ];
 
   const isPathInItems = items.some((item) =>
@@ -157,7 +164,7 @@ export default function DashboardLayout({ children, params }) {
               sideBarOpen
                 ? window.innerWidth < 768 && "inboxSideBarOpen"
                 : window.innerWidth < 768 && "inboxSideBarClose"
-            } bg-[#2C2C2C] w-[20rem] flex-shrink-0 z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-5 overflow-y-auto `}
+            } bg-[#2C2C2C] w-[20rem] flex-shrink-0 z-50 md:relative absolute md:h-auto h-full transition-all duration-300 ease-linear flex flex-col justify-between gap-2  px-1 md:px-3 py-3 overflow-y-auto `}
           >
             <div>
               <div className=" h-[5rem] ">

@@ -588,13 +588,13 @@ export function GeneralUsersTable({ generalUsers, fetchGeneralUsers, adminId }) 
         <tbody>
           {generalUsers.map((user, idx) => (
             <tr key={idx} className="hover:bg-gray-50 transition border-b">
-              <td className="py-4 px-2 text-center">{user?.userName}</td>
-              <td className="py-4 px-2 text-center">{user?.userID}</td>
-              <td className="py-4 px-2 text-center">{user?.userGsuit}</td>
-              <td className="py-4 px-2 text-center">{user?.Department}</td>
-              <td className="py-4 px-2 text-center">{user?.pickupPoint}</td>
-              <td className="py-4 px-2 text-center">{user?.gender}</td>
-              <td className="py-4 px-2 text-center">{user?.userType}</td>
+              <td className="py-4 px-2 text-center">{user?.userName || "N/A"}</td>
+              <td className="py-4 px-2 text-center">{user?.userID || "N/A"}</td>
+              <td className="py-4 px-2 text-center">{user?.userGsuit || "N/A"}</td>
+              <td className="py-4 px-2 text-center">{user?.Department || "N/A"}</td>
+              <td className="py-4 px-2 text-center">{user?.pickupPoint || "N/A"}</td>
+              <td className="py-4 px-2 text-center">{user?.gender || "N/A"}</td>
+              <td className="py-4 px-2 text-center">{user?.userType || "N/A"}</td>
               <td className="px-2 py-2 text-center">
                 <div className="flex justify-center items-center gap-2 text-[1.4rem]">
                   <div
