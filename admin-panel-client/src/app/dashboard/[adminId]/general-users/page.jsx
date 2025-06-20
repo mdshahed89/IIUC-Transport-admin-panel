@@ -42,7 +42,7 @@ const Page = ({params}) => {
     fetchGeneralUsers();
   }, []);
 
-  console.log(generalUsers);
+  // console.log(generalUsers);
   
 
   return (
