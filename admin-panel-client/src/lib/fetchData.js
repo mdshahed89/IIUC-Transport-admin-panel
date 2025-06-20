@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 // const API_LINK = "https://iiuc-transport-system.onrender.com/api/admin";
 // const API_LINK = "http://147.93.107.88:5000/api/admin";
-const API_LINK = "https://api.salmanshahriar.wiki/api/admin";
+const API_LINK = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/admin`;
 
 export const create = async ({ endpoint, data }) => {
   try {

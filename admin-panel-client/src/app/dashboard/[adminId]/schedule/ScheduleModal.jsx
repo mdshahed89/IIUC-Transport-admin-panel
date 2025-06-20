@@ -31,9 +31,9 @@ const ScheduleModal = ({ scheduleTypes }) => {
       </Button>
 
       {isModal && (
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 shadow-md bg-white p-4">
+        <div className="absolute rounded-xl top-12 left-1/2 -translate-x-1/2 shadow-md bg-white p-4">
           <div
-            className="p-1 mb-1 max-w-min rounded-full bg-slate-200 cursor-pointer"
+            className="ml-auto w-full p-1 mb-3 max-w-min rounded-full bg-slate-200 cursor-pointer"
             onClick={handleOpen}
           >
             <CgClose size={24} />

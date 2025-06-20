@@ -1,29 +1,50 @@
-import { fetchScheduleType, getBusSchedules } from "@/lib/fetchData";
+"use client";
 import React from "react";
 import Content from "./Content";
 import ScheduleForm from "./form";
 import Pagination from "@/components/Pageination";
+import { useParams, useSearchParams } from "next/navigation";
+import useFetchData from "@/app/hooks/useFetchData";
+import { SubPageLoading } from "@/components/PageLoading";
 
-const BusInformation = async ({ searchParams, params }) => {
-  const { edit, add, page = 1 } = await searchParams;
-  const {adminId} = await params
-  let schedules;
-  let scheduleTypes;
-  if (!edit && !add) {
-    const busSchedules = await getBusSchedules();
-    schedules = busSchedules || {};
+const BusInformation = () => {
+  const searchParams = useSearchParams();
 
-    scheduleTypes = (await fetchScheduleType()) || [];
-  }
+  const edit = searchParams.get("edit");
+  const add = searchParams.get("add");
+  const page = searchParams.get("page") || 1;
+  const { adminId } = useParams();
+
+  const {
+    data: schedules,
+    isLoading: scheduleLoading,
+    fetcher: fetchSchedule,
+  } = useFetchData({
+    endpoint: `/bus-schedules?page=${page}`,
+  });
+  const {
+    data: scheduleTypes,
+    isLoading: scheduleTypesLoading,
+    fetcher: fetchScheduleTypes,
+  } = useFetchData({
+    endpoint: `/dashboard/schedule-types`,
+  });
 
   return (
     <>
-      {edit || add ? (
-        <ScheduleForm edit={edit} adminId={adminId} />
+      {scheduleLoading ? (
+        <SubPageLoading />
+      ) : edit || add ? (
+        <ScheduleForm
+          edit={edit}
+          adminId={adminId}
+          fetchSchedule={fetchSchedule}
+        />
       ) : (
         <div className="p-4 md:p-8">
           <h2 className="text-3xl font-semibold text-center mb-6">Schedule</h2>
           <Content
+            fetchSchedule={fetchSchedule}
             schedules={schedules?.schedules}
             scheduleTypes={scheduleTypes}
             adminId={adminId}

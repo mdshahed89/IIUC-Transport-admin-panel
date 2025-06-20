@@ -47,6 +47,7 @@ export default function Home() {
           body: JSON.stringify({ email, password }),
         }
       );
+      console.log(response);
       const data = await response.json();
       if (response.ok && data?.token) {
         console.log("Login successful:", data);
@@ -56,7 +57,7 @@ export default function Home() {
           email: email,
           token: data?.token || "",
           id: decodeToken?.id,
-          role: decodeToken?.role
+          role: decodeToken?.role,
         });
         router.push(`/dashboard/${decodeToken?.id}`);
       } else {

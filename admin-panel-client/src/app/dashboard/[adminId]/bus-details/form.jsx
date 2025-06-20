@@ -1,28 +1,38 @@
+"use client";
 import Button from "@/components/Button";
 
-import {
-  create,
-  editData,
-  getBusInfoById,
-  getDriverInfo,
-  getHelperInfo,
-} from "@/lib/fetchData";
-import { redirect } from "next/navigation";
 import NameAndPhoneSelect from "./NameAndPhoneSelect";
 import { IoArrowBackSharp } from "react-icons/io5";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import useFetchData from "@/app/hooks/useFetchData";
+import { SubPageLoading } from "@/components/PageLoading";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-const BusInfoForm = async ({ edit, adminId }) => {
+const BusInfoForm = ({ edit, adminId, fetchBusInfo }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const editId = Number(edit);
 
-  const driverInfo = await getDriverInfo();
-  const helperInfo = await getHelperInfo();
+  const router = useRouter();
 
-  let editAbleBus;
-  if (edit) {
-    // Get editable data
-    editAbleBus = await getBusInfoById(editId);
-  }
+  const { data: driverInfo, isLoading: driverInfoLoading } = useFetchData({
+    endpoint: `/driver-info`,
+  });
+  const { data: helperInfo, isLoading: helperInfoLoading } = useFetchData({
+    endpoint: `/helper-info`,
+  });
+
+  const { data: editAbleBus, isLoading: editableBusLoading } =
+    useFetchData({ endpoint: `/bus-info/${editId}`, isFetch: editId }) || {};
+
+  console.log("editable");
+  console.log(editAbleBus);
+  // let editAbleBus;
+  // if (edit) {
+  //   // Get editable data
+  //   editAbleBus = await getBusInfoById(editId);
+  // }
 
   // Destucture editable data
   const {
@@ -37,27 +47,81 @@ const BusInfoForm = async ({ edit, adminId }) => {
   } = editAbleBus || {};
 
   //handle submit
-  const onSubmit = async (formData) => {
-    "use server";
-    const fromEntries = Object.fromEntries(formData.entries());
-    const data = {
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const fromEntries = Object.fromEntries(new FormData(e.target));
+    const dataToSubmit = {
       ...fromEntries,
       busNo: Number(fromEntries.busNo),
       capacity: Number(fromEntries.capacity),
     };
 
-    if (edit) {
-      const edited = await editData({ endpoint: `/bus-info/${editId}`, data });
-      if (!edited?.error) {
-        redirect(`/dashboard/${adminId}/bus-details`);
+    console.log(dataToSubmit);
+
+    if (!edit) {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `https://api.salmanshahriar.wiki/api/admin/bus-info`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dataToSubmit),
+          }
+        );
+
+        const data = await response.json();
+
+        console.log(data);
+        if (response.ok) {
+          toast.success("Added successfully!");
+          router.push(`/dashboard/${adminId}/bus-details`);
+          await fetchBusInfo();
+        } else {
+          toast.error(data.message || "Failed to add!");
+        }
+      } catch (error) {
+        toast.error("Something went wrong! Please try again.");
+        console.error("Error submitting:", error);
+      } finally {
+        setIsLoading(false);
       }
     } else {
-      const created = await create({ endpoint: "/bus-info", data });
-      if (!created?.error) {
-        redirect(`/dashboard/${adminId}/bus-details`);
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `https://api.salmanshahriar.wiki/api/admin/bus-info/${editId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(dataToSubmit),
+          }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+          toast.success("Updated successfully!");
+          router.push(`/dashboard/${adminId}/bus-details`);
+          await fetchBusInfo();
+        } else {
+          toast.error(data.message || "Failed to update!");
+        }
+      } catch (error) {
+        toast.error("Something went wrong! Please try again.");
+        console.error("Error submitting :", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
+
+  const isDataLoading =
+    driverInfoLoading || helperInfoLoading || editableBusLoading;
 
   return (
     <div className="max-w-3xl mx-auto my-8 p-8 bg-white md:shadow-[0px_1px_10px_rgba(0,0,0,0.15)] rounded-2xl">
@@ -72,51 +136,55 @@ const BusInfoForm = async ({ edit, adminId }) => {
           <IoArrowBackSharp />
         </Link>
       </div>
-      <form action={onSubmit}>
-        <InputField
-          label="Bus Number"
-          defaultValue={busNo}
-          type="number"
-          name="busNo"
-          required
-        />
-        <InputField
-          label="Vehicle Id"
-          defaultValue={vehicleId}
-          name="vehicleId"
-          required
-        />
+      {isDataLoading ? (
+        <SubPageLoading />
+      ) : (
+        <form onSubmit={onSubmit}>
+          <InputField
+            label="Bus Number"
+            defaultValue={busNo}
+            type="number"
+            name="busNo"
+            required
+          />
+          <InputField
+            label="Vehicle Id"
+            defaultValue={vehicleId}
+            name="vehicleId"
+            required
+          />
 
-        <NameAndPhoneSelect
-          name="driver"
-          label="Driver"
-          data={driverInfo}
-          defaultName={driverName}
-          defaultPhone={driverPhone}
-        />
-        <NameAndPhoneSelect
-          name="helper"
-          label="Helper"
-          data={helperInfo}
-          defaultName={helperName}
-          defaultPhone={helperPhone}
-        />
+          <NameAndPhoneSelect
+            name="driver"
+            label="Driver"
+            data={driverInfo}
+            defaultName={driverName}
+            defaultPhone={driverPhone}
+          />
+          <NameAndPhoneSelect
+            name="helper"
+            label="Helper"
+            data={helperInfo}
+            defaultName={helperName}
+            defaultPhone={helperPhone}
+          />
 
-        <InputField
-          label="Capacity"
-          defaultValue={capacity}
-          name="capacity"
-          type="number"
-          required
-        />
+          <InputField
+            label="Capacity"
+            defaultValue={capacity}
+            name="capacity"
+            type="number"
+            required
+          />
 
-        <Button
-          classes="bg-green-500 w-full active:scale-90 rounded-lg text-lg font-semibold shadow-md transition-all duration-300"
-          type="submit"
-        >
-          {edit ? "Edit Assign" : "Add"} Bus
-        </Button>
-      </form>
+          <Button
+            classes="bg-green-500 w-full active:scale-90 rounded-lg text-lg font-semibold shadow-md transition-all duration-300"
+            type="submit"
+          >
+            {edit ? "Edit Assign" : "Add"} Bus
+          </Button>
+        </form>
+      )}
     </div>
   );
 };

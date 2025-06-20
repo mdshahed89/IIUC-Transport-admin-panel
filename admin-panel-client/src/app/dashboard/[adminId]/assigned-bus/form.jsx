@@ -1,36 +1,37 @@
+"use client";
+import useFetchData from "@/app/hooks/useFetchData";
 import Button from "@/components/Button";
 import { FormSelectField, FormSelectFieldSearch } from "@/components/FormField";
-import {
-  create,
-  editData,
-  getAssignBusById,
-  getBusInfo,
-  getBusSchedules,
-} from "@/lib/fetchData";
+import { ButtonLoading, SubPageLoading } from "@/components/PageLoading";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import React from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import { IoArrowBackSharp } from "react-icons/io5";
+import { toast } from "react-toastify";
 
-const AssignBusForm = async ({ edit, adminId }) => {
+const AssignBusForm = ({ edit, adminId, fetchAssignBus }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
   // editable assign bus id
   const editId = Number(edit);
 
-  // editable assign bus data
-  let editableAssignBus;
-  if (editId) {
-    // fetch editable assign bus
-    editableAssignBus = (await getAssignBusById(editId)) || {};
-  }
+  // fetch editable assign bus
+  const { data: editableAssignBus, isLoading: editableLoading } =
+    useFetchData({ endpoint: `/assign-bus/${editId}` }) || {};
+
+  const isEditableLoading = edit && editableLoading;
 
   // fetch bus info
-  const busInfo = await getBusInfo();
-  const busNo = busInfo?.buses.map((bus) => bus.busNo) || [];
+  const { data: busInfo } = useFetchData({ endpoint: "/bus-info" });
+
+  // const busInfo = await getBusInfo();
+  const busNo = busInfo?.buses?.map((bus) => bus.busNo) || [];
 
   // Bus Schedule
-  const busSchedules = await getBusSchedules();
+  const { data: busSchedules } = useFetchData({ endpoint: "/bus-schedules" });
   const busSchedulesName =
-    busSchedules?.schedules.map((schedules) => schedules.scheduleName) || [];
+    busSchedules?.schedules?.map((schedules) => schedules.scheduleName) || [];
 
   // Destructure editable assign bus
   const {
@@ -41,26 +42,92 @@ const AssignBusForm = async ({ edit, adminId }) => {
   } = editableAssignBus || {};
 
   // Handle submit
-  const onSubmit = async (formData) => {
-    "use server";
-    const fromEntries = Object.fromEntries(formData.entries());
-    const data = { ...fromEntries, busNo: Number(fromEntries.busNo) };
+  // const onSubmit = async (formData) => {
+  //   "use server";
+  //   const fromEntries = Object.fromEntries(formData.entries());
+  //   const data = { ...fromEntries, busNo: Number(fromEntries.busNo) };
 
-    // if editable, then edit data otherwise add data
-    if (edit) {
-      const edited = await editData({
-        endpoint: `/assign-bus/${editId}`,
-        data,
-      });
+  //   // if editable, then edit data otherwise add data
+  //   if (edit) {
+  //     const edited = await editData({
+  //       endpoint: `/assign-bus/${editId}`,
+  //       data,
+  //     });
 
-      if (!edited?.error) {
-        redirect(`/dashboard/${adminId}/assigned-bus`);
+  //     if (!edited?.error) {
+  //       redirect(`/dashboard/${adminId}/assigned-bus`);
+  //     }
+  //   } else {
+  //     const created = await create({ endpoint: "/assign-bus", data });
+
+  //     if (!created?.error) {
+  //       redirect(`/dashboard/${adminId}/assigned-bus`);
+  //     }
+  //   }
+  // };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const formData = Object.fromEntries(new FormData(e.target));
+    if (!edit) {
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `https://api.salmanshahriar.wiki/api/admin/assign-bus`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
+
+        const data = await response.json();
+
+        console.log(data);
+        if (response.ok) {
+          toast.success("Added successfully!");
+          router.push(`/dashboard/${adminId}/assigned-bus`);
+          await fetchAssignBus();
+        } else {
+          toast.error(data.message || "Failed to add!");
+        }
+      } catch (error) {
+        toast.error("Something went wrong! Please try again.");
+        console.error("Error submitting driver details:", error);
+      } finally {
+        setIsLoading(false);
       }
     } else {
-      const created = await create({ endpoint: "/assign-bus", data });
+      setIsLoading(true);
+      try {
+        const response = await fetch(
+          `https://api.salmanshahriar.wiki/api/admin/assign-bus/${editId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          }
+        );
 
-      if (!created?.error) {
-        redirect(`/dashboard/${adminId}/assigned-bus`);
+        const data = await response.json();
+
+        console.log(data);
+        if (response.ok) {
+          toast.success("Updated successfully!");
+          router.push(`/dashboard/${adminId}/assigned-bus`);
+          await fetchAssignBus();
+        } else {
+          toast.error(data.message || "Failed to update!");
+        }
+      } catch (error) {
+        toast.error("Something went wrong! Please try again.");
+        console.error("Error submitting driver details:", error);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -77,44 +144,50 @@ const AssignBusForm = async ({ edit, adminId }) => {
           <IoArrowBackSharp />
         </Link>
       </div>
-      <form action={onSubmit} className="space-y-4">
-        <FormSelectFieldSearch
-          label="Bus No"
-          name="busNo"
-          placeholder="Search Bus No"
-          required
-          defaultValue={editableBusNo}
-          selectOption={busNo}
-        />
-        <FormSelectFieldSearch
-          label="Slot Name"
-          name="scheduleName"
-          placeholder="Search Schedule Name"
-          required
-          defaultValue={scheduleName}
-          selectOption={busSchedulesName}
-        />
 
-        <FormSelectField
-          label="Bus Type"
-          name="busType"
-          defaultValue={busType}
-          selectOption={["Students", "Teachers", "Staff"]}
-        />
-        <FormSelectField
-          label="Gender"
-          name="Gender"
-          defaultValue={Gender}
-          selectOption={["Both", "Male", "Female"]}
-        />
+      {isEditableLoading ? (
+        <SubPageLoading />
+      ) : (
+        <form onSubmit={onSubmit} className="space-y-4">
+          <FormSelectFieldSearch
+            label="Bus No"
+            name="busNo"
+            placeholder="Search Bus No"
+            required
+            defaultValue={editableBusNo}
+            selectOption={busNo}
+          />
+          <FormSelectFieldSearch
+            label="Slot Name"
+            name="scheduleName"
+            placeholder="Search Schedule Name"
+            required
+            defaultValue={scheduleName}
+            selectOption={busSchedulesName}
+          />
 
-        <Button
-          type="submit"
-          classes="bg-green-500 w-full active:scale-90 rounded-lg text-lg font-semibold shadow-md transition-all duration-300"
-        >
-          {edit ? "Edit Assign " : " Assign "}Bus
-        </Button>
-      </form>
+          <FormSelectField
+            label="Bus Type"
+            name="busType"
+            defaultValue={busType}
+            selectOption={["Students", "Teachers", "Staff"]}
+          />
+          <FormSelectField
+            label="Gender"
+            name="Gender"
+            defaultValue={Gender}
+            selectOption={["Both", "Male", "Female"]}
+          />
+
+          <Button
+            type="submit"
+            classes="bg-green-500 w-full active:scale-90 rounded-lg text-lg font-semibold shadow-md transition-all duration-300"
+          >
+            {isLoading && <ButtonLoading />}{" "}
+            {edit ? "Edit Assign " : " Assign "}Bus
+          </Button>
+        </form>
+      )}
     </div>
   );
 };

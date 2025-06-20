@@ -46,7 +46,7 @@ export default function NameAndPhoneSelect({
       </label>
       <input
         type="text"
-        name={`${name}Phone`}
+        name={name === "driver" ? "phone" : `${name}Phone`}
         value={phoneNumber || defaultPhone} // Updated phone number
         readOnly
         className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all duration-300 ease-in-out focus:ring-1 focus:ring-green-500"
